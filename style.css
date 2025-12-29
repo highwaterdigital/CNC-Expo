@@ -1,0 +1,382 @@
+/*
+Theme Name: CNC Expo Child
+Theme URI: https://cablenetconvergence.com
+Description: Child theme for CNC Cable & Internet Expo based on CNC Hyd Parent. Features modern header/footer, shortcode-based pages, and comprehensive expo functionality.
+Author:HighWater Digital – Vijay
+Author URI: https://HighWaterDigital.com
+Template: cnc-parent
+Version: 2.0.0
+Text Domain: cnc-child
+License: GNU General Public License v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Tags: child-theme, event, expo, cable, internet, cnc-parent
+Requires PHP: 7.4
+*/
+
+/* =================================================================
+   CNC EXPO CHILD THEME - CNC PARENT THEME BASED
+   Component and page CSS live beside their PHP files.
+   Inherits from CNC Hyd Parent theme and extends for Cable & Internet Expo.
+   ================================================================= */
+
+/* CSS Variables - Extending CNC Parent Colors */
+:root {
+    /* Inherit parent theme colors */
+    --shape-red: #E11B22;        /* Same as parent */
+    --shape-black: #0D0D0D;      /* Same as parent */
+    --shape-gray: #F5F6F8;       /* Same as parent */
+    --shape-radius: 0px;         /* Tighter rounding sitewide */
+    --cnc-button-radius: 0px;   /* Unified button rounding */
+    
+    /* Child theme additional colors */
+    --shape-gold: #F5C518;       /* Cable & Internet Expo accent */
+    --shape-white: #FFFFFF;
+    --cnc-blue: #007cba;         /* Professional blue */
+    --cnc-green: #28a745;        /* Success green */
+    
+    /* Extended containers */
+    --cnc-max-width: 1400px;     /* Wider than parent's 1200px for expo content */
+}
+
+/* =================================================================
+   CNC PARENT THEME INTEGRATION & OVERRIDES
+   ================================================================= */
+
+/* Global Reset for Layout Issues */
+html, body {
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.site-main {
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+/* Extend parent theme's container utility */
+.cnc-container {
+    max-width: var(--cnc-max-width);
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+/* Override parent container for expo content */
+body.page-id-6 .container {
+    max-width: 100% !important;
+    padding: 0 !important;
+}
+
+/* Hide parent theme's default header for custom pages */
+/*
+body.page-id-6 #site-header,
+body.page-id-6 .site-header,
+body.page-id-6 header.header {
+    display: none !important;
+}
+*/
+
+/* Hide parent theme's navigation */
+/*
+body.page-id-6 #site-navigation,
+body.page-id-6 .site-navigation,
+body.page-id-6 .main-navigation {
+    display: none !important;
+}
+*/
+
+/* Hide parent theme's footer */
+/*
+body.page-id-6 #site-footer,
+body.page-id-6 .site-footer,
+body.page-id-6 footer.footer {
+    display: none !important;
+}
+*/
+
+/* Full-width layout for shortcode pages */
+/*
+body.page-id-6 .site-main {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+*/
+
+/*
+body.page-id-6 .page-header {
+    display: none !important;
+}
+
+body.page-id-6 .entry-header {
+    display: none !important;
+}
+*/
+
+/* =================================================================
+   BASE TYPOGRAPHY & LAYOUT
+   ================================================================= */
+
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Jost:wght@300;400;500;600;700&display=swap');
+
+/* Base Typography */
+body {
+    font-family: 'Jost', sans-serif;
+    line-height: 1.6;
+    color: var(--shape-black);
+}
+
+h1, h2, h3, h4, h5, h6,
+.elementor-heading-title {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--shape-black);
+}
+
+/* Image optimization */
+img {
+    height: auto;
+    max-width: 100%;
+    border-radius: var(--shape-radius);
+}
+
+/* =================================================================
+   CNC CUSTOM COMPONENTS SUPPORT
+   ================================================================= */
+
+/* Container utility */
+.cnc-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Button Components */
+.cnc-btn {
+    display: inline-block;
+    padding: 12px 24px;
+    text-decoration: none;
+    border-radius: var(--cnc-button-radius);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+    text-align: center;
+}
+
+.cnc-btn-primary {
+    background: linear-gradient(135deg, var(--shape-red) 0%, #C01015 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(225,27,34,0.3);
+}
+
+.cnc-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(225,27,34,0.5);
+    color: white;
+    text-decoration: none;
+}
+
+.cnc-btn-secondary {
+    background: transparent;
+    color: var(--shape-red);
+    border: 2px solid var(--shape-red);
+}
+
+.cnc-btn-secondary:hover {
+    background: var(--shape-red);
+    color: white;
+    text-decoration: none;
+}
+
+/* Global button rounding override */
+button,
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+.cnc-btn,
+.cnc-header__btn,
+.cnc-menu-toggle,
+.wp-block-button__link,
+a.button,
+button.button {
+    border-radius: var(--cnc-button-radius) !important;
+}
+
+/* =================================================================
+   SHORTCODE PAGE OVERRIDES
+   ================================================================= */
+
+/* Hide WordPress/Elementor elements that conflict */
+/*
+body.page-id-6 .elementor-location-header,
+body.page-id-6 .elementor-location-footer {
+    display: none !important;
+}
+*/
+
+/* Ensure shortcode content is full-width */
+body.page-id-6 .elementor-section-wrap,
+body.page-id-6 .elementor-inner,
+body.page-id-6 .elementor-container {
+    max-width: 100% !important;
+    padding: 0 !important;
+}
+
+/* Center align all expo sections and inner widgets on every device */
+body.page-id-6 .elementor-section,
+body.page-id-6 .elementor-container,
+body.page-id-6 .elementor-row,
+body.page-id-6 .elementor-column,
+body.page-id-6 .elementor-widget-wrap,
+body.page-id-6 .elementor-widget-container {
+    text-align: center;
+}
+
+body.page-id-6 .elementor-row,
+body.page-id-6 .elementor-column,
+body.page-id-6 .elementor-widget-wrap {
+    justify-content: center !important;
+    align-items: center;
+}
+
+/* =================================================================
+   CUSTOM HEADER/FOOTER SUPPORT
+   ================================================================= */
+
+/* Custom header visibility */
+.cnc-header-custom,
+.cnc-top-bar {
+    display: block !important;
+    visibility: visible !important;
+}
+
+/* Custom footer visibility */
+.cnc-footer-modern,
+.cnc-footer-info {
+    display: block !important;
+    visibility: visible !important;
+}
+
+/* =================================================================
+   RESPONSIVE DESIGN
+   ================================================================= */
+
+@media (max-width: 1024px) {
+    .cnc-container {
+        padding: 0 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .cnc-container {
+        padding: 0 15px;
+    }
+    
+    .cnc-btn {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .cnc-container {
+        padding: 0 10px;
+    }
+}
+
+/* =================================================================
+   ELEMENTOR COMPATIBILITY
+   ================================================================= */
+
+/* Ensure Elementor widgets work with CNC colors */
+.elementor-widget-button .elementor-button {
+    border-radius: 20px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Elementor section backgrounds */
+.elementor-section.cnc-section-red {
+    background: var(--shape-red) !important;
+}
+
+.elementor-section.cnc-section-gold {
+    background: var(--shape-gold) !important;
+}
+
+/* Wrapper for Elementor content appended to CNC home */
+.cnc-elementor-content-wrapper {
+    width: 100%;
+    padding: 40px 20px 60px;
+    box-sizing: border-box;
+}
+
+/* =================================================================
+   UTILITY CLASSES
+   ================================================================= */
+
+.cnc-text-center { text-align: center; }
+.cnc-text-left { text-align: left; }
+.cnc-text-right { text-align: right; }
+
+.cnc-color-red { color: var(--shape-red) !important; }
+.cnc-color-gold { color: var(--shape-gold) !important; }
+.cnc-color-black { color: var(--shape-black) !important; }
+
+.cnc-bg-red { background-color: var(--shape-red) !important; }
+.cnc-bg-gold { background-color: var(--shape-gold) !important; }
+.cnc-bg-gray { background-color: var(--shape-gray) !important; }
+
+.cnc-hidden { display: none !important; }
+.cnc-visible { display: block !important; }
+
+/* =================================================================
+   DEBUGGING AIDS (Remove in production)
+   ================================================================= */
+
+.cnc-debug-border { border: 2px dashed var(--shape-red); }
+.cnc-debug-bg { background: rgba(225,27,34,0.1); }
+
+/* 🔧 CNC Child Theme - Hide Parent Header/Footer/Title Overrides */
+
+/*
+header#site-header[data-cnc-debug="unwanted-header"],
+footer#site-footer,
+.site-header,
+.site-footer,
+.page-header,
+.entry-header,
+.elementor-location-header,
+.elementor-location-footer,
+h1.entry-title,
+.page-title {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+*/
+
+/* Prevent spacing gaps after removal */
+/*
+body {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+*/
+
+

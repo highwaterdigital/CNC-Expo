@@ -1,0 +1,5 @@
+@media (max-width: 768px) {
+    :root { --cnc-section-padding: 60px 16px; }
+    .cnc-hero h1 { font-size: 32px; }
+    .cnc-hero .cnc-lead { font-size: 15px; }
+}

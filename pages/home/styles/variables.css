@@ -1,0 +1,16 @@
+/* CNC Design System Variables - v7.0 */
+:root {
+    --cnc-red: #E11B22;
+    --cnc-black: #0D0D0D;
+    --cnc-gold: #F5C518;
+    --cnc-gray: #F7F8FA;
+    --cnc-white: #FFFFFF;
+    --cnc-blue: #0090D9;
+    --cnc-magenta: #C6308C;
+    --cnc-purple: #5E3A8E;
+    --cnc-teal: #00B4B4;
+    --cnc-transition: all 0.3s ease;
+    --cnc-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    --gradient-primary: linear-gradient(135deg, var(--cnc-red) 0%, #b71c1c 100%);
+    --gradient-secondary: linear-gradient(135deg, var(--cnc-blue) 0%, var(--cnc-teal) 100%);
+}

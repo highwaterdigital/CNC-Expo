@@ -1,0 +1,335 @@
+<?php
+// BOM Fix: Removed invisible character
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+/**
+ * Render visitor registration form markup with optional disabled state.
+ *
+ * @param bool $is_disabled
+ * @return string
+ */
+function cnc_get_visitor_registration_form_html($is_disabled = false) {
+    ob_start();
+    ?>
+    <style>
+    .cnc-visitors-wrapper {
+        --cnc-magenta: #C6308C;
+        --cnc-purple: #5E3A8E;
+        --cnc-dark: #0D0D0D;
+        --cnc-light: #F8F9FA;
+        --cnc-white: #FFFFFF;
+        --cnc-border: #E5E5E5;
+        --cnc-gradient-hero: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        --cnc-gradient-accent: linear-gradient(135deg, #5E3A8E 0%, #C6308C 100%);
+        --cnc-font-primary: 'Poppins', sans-serif;
+        --cnc-font-text: 'Inter', sans-serif;
+        --cnc-radius: 8px;
+        --cnc-shadow: 0 12px 24px rgba(0,0,0,0.08);
+    }
+    .cnc-visitors-page {
+        font-family: var(--cnc-font-text);
+        color: #444;
+        background: var(--cnc-white);
+        line-height: 1.6;
+    }
+    .cnc-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+    .cnc-visitor-hero {
+        padding: 100px 0 80px;
+        background: var(--cnc-gradient-hero);
+        color: var(--cnc-white);
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+    .cnc-visitor-hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -20%;
+        width: 80%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(198, 48, 140, 0.15) 0%, transparent 70%);
+        pointer-events: none;
+    }
+    .cnc-visitor-hero h1 {
+        font-family: var(--cnc-font-primary);
+        font-size: clamp(2.5rem, 5vw, 3.5rem);
+        font-weight: 800;
+        margin-bottom: 1rem;
+        line-height: 1.2;
+    }
+    .cnc-profile-section {
+        padding: 80px 0;
+        background: var(--cnc-white);
+        text-align: center;
+    }
+    .cnc-section-title {
+        font-family: var(--cnc-font-primary);
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: var(--cnc-dark);
+        margin-bottom: 1.5rem;
+    }
+    .cnc-profile-desc {
+        max-width: 900px;
+        margin: 0 auto 3rem;
+        font-size: 1.05rem;
+        color: #555;
+    }
+    .cnc-industry-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 1.2rem;
+        text-align: left;
+    }
+    .cnc-industry-item {
+        background: var(--cnc-light);
+        padding: 1.2rem;
+        border-radius: var(--cnc-radius);
+        border: 1px solid var(--cnc-border);
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--cnc-purple);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: transform 0.2s, background 0.2s;
+    }
+    .cnc-industry-item:hover {
+        transform: translateY(-3px);
+        background: #fff;
+        border-color: var(--cnc-magenta);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    .cnc-industry-icon { color: var(--cnc-magenta); }
+    .cnc-form-section {
+        padding: 80px 0 100px;
+        background: var(--cnc-light);
+    }
+    .cnc-form-card {
+        max-width: 800px;
+        margin: 0 auto;
+        background: var(--cnc-white);
+        padding: 3rem;
+        border-radius: var(--cnc-radius);
+        box-shadow: var(--cnc-shadow);
+        position: relative;
+        transition: 0.3s;
+    }
+    .cnc-form-card.is-disabled {
+        background-color: #f2f2f2;
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+    .cnc-form-card.is-disabled .cnc-form-input,
+    .cnc-form-card.is-disabled .cnc-form-select {
+        background-color: #e6e6e6;
+        color: #a0a0a0;
+        border-color: #ccc;
+        cursor: not-allowed;
+    }
+    .cnc-form-card.is-disabled ::placeholder { color: #b0b0b0; }
+    .cnc-form-card.is-disabled .cnc-btn-submit {
+        background: #999;
+        color: #eee;
+        cursor: not-allowed;
+        box-shadow: none;
+        transform: none;
+    }
+    .cnc-form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+    .cnc-form-group {
+        display: flex;
+        flex-direction: column;
+    }
+    .cnc-form-group.full-width { grid-column: 1 / -1; }
+    .cnc-form-input, .cnc-form-select {
+        padding: 16px 20px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 1rem;
+        font-family: inherit;
+        transition: border-color 0.3s;
+        width: 100%;
+        box-sizing: border-box;
+        background: #fdfdfd;
+    }
+    .cnc-form-input:focus, .cnc-form-select:focus {
+        border-color: var(--cnc-purple);
+        background: #fff;
+        outline: none;
+        box-shadow: 0 4px 10px rgba(94, 58, 142, 0.1);
+    }
+    .cnc-btn-submit {
+        background: var(--cnc-gradient-accent);
+        color: white;
+        border: none;
+        padding: 18px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+        margin-top: 1rem;
+        width: 100%;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .cnc-btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(198, 48, 140, 0.3);
+    }
+    .cnc-form-message {
+        margin-top: 1.5rem;
+        padding: 1rem;
+        border-radius: 6px;
+        text-align: center;
+        display: none;
+        font-weight: 500;
+    }
+    .cnc-form-message.success { background: #d4edda; color: #155724; display: block; }
+    .cnc-form-message.error { background: #f8d7da; color: #721c24; display: block; }
+    @media (max-width: 768px) {
+        .cnc-form-card { padding: 2rem 1.5rem; }
+        .cnc-form-grid { grid-template-columns: 1fr; }
+        .cnc-industry-grid { grid-template-columns: 1fr 1fr; }
+    }
+    </style>
+
+    <div class="cnc-visitors-wrapper">
+        <div class="cnc-visitors-page">
+            <section class="cnc-visitor-hero">
+                <div class="cnc-container">
+                    <h1>Visitor Registration</h1>
+                    <p>Join industry leaders, decision-makers, and experts to explore the future of connectivity.</p>
+                </div>
+            </section>
+            <section class="cnc-profile-section">
+                <div class="cnc-container">
+                    <h2 class="cnc-section-title">Who Should Visit?</h2>
+                    <p class="cnc-profile-desc">We invite professionals from diverse backgrounds to explore the latest innovations in Cable TV, Broadband, IoT, and 5G.</p>
+                    <div class="cnc-industry-grid">
+                        <?php $industries = [
+                            ['icon' => 'ðŸ“¡', 'label' => 'ISPs & Cable Operators'],
+                            ['icon' => 'ðŸ“º', 'label' => 'Broadcast & OTT Players'],
+                            ['icon' => 'ðŸ˜ï¸', 'label' => 'Smart City Planners'],
+                            ['icon' => 'ðŸ“¶', 'label' => 'Telecom Engineers'],
+                            ['icon' => 'ðŸ—ï¸', 'label' => 'Infrastructure Developers'],
+                            ['icon' => 'ðŸ”’', 'label' => 'Security & Surveillance'],
+                            ['icon' => 'ðŸ’¾', 'label' => 'IT & Data Centers'],
+                            ['icon' => 'ðŸ›ï¸', 'label' => 'Government Officials']
+                        ];
+                        foreach ($industries as $industry) : ?>
+                            <div class="cnc-industry-item"><span class="cnc-industry-icon"><?php echo esc_html($industry['icon']); ?></span> <?php echo esc_html($industry['label']); ?></div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </section>
+            <section class="cnc-form-section">
+                <div class="cnc-container">
+                    <div class="cnc-form-card<?php echo $is_disabled ? ' is-disabled' : ''; ?>">
+                        <h2 class="cnc-section-title" style="text-align:center;">Secure Your Badge</h2>
+                        <form id="cnc-visitor-form">
+                            <div class="cnc-form-grid">
+                                <?php $fields = [
+                                    ['name' => 'name', 'type' => 'text', 'label' => 'Full Name *', 'required' => true],
+                                    ['name' => 'email', 'type' => 'email', 'label' => 'Email Address *', 'required' => true],
+                                    ['name' => 'phone', 'type' => 'tel', 'label' => 'Mobile Number *', 'required' => true],
+                                    ['name' => 'company', 'type' => 'text', 'label' => 'Company Name *', 'required' => true],
+                                    ['name' => 'city', 'type' => 'text', 'label' => 'City *', 'required' => true],
+                                    ['name' => 'designation', 'type' => 'text', 'label' => 'Designation', 'required' => false]
+                                ];
+                                foreach ($fields as $field) : ?>
+                                    <div class="cnc-form-group">
+                                        <input type="<?php echo esc_attr($field['type']); ?>" name="<?php echo esc_attr($field['name']); ?>" class="cnc-form-input" <?php echo $field['required'] ? 'required ' : ''; ?>placeholder="<?php echo esc_attr($field['label']); ?>" <?php echo $is_disabled ? 'disabled' : ''; ?>>
+                                    </div>
+                                <?php endforeach; ?>
+                                <div class="cnc-form-group full-width">
+                                    <select name="interest" class="cnc-form-select" <?php echo $is_disabled ? 'disabled' : ''; ?> required>
+                                        <option value="" disabled selected>Select Primary Interest *</option>
+                                        <?php foreach (['General Visit', 'Cable & Broadband', 'IoT & Smart Home', 'Security & Surveillance', 'Networking & IT'] as $option) : ?>
+                                            <option value="<?php echo esc_attr($option); ?>"><?php echo esc_html($option); ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                            </div>
+                            <input type="hidden" name="action" value="cnc_register_visitor">
+                            <?php if (function_exists('wp_create_nonce')) : ?>
+                                <input type="hidden" name="nonce" value="<?php echo esc_attr(wp_create_nonce('cnc_visitor_nonce')); ?>">
+                            <?php endif; ?>
+                            <div class="cnc-form-actions">
+                                <?php if ($is_disabled) : ?>
+                                    <button type="button" class="cnc-btn-submit" disabled>Register</button>
+                                <?php else : ?>
+                                    <button type="submit" class="cnc-btn-submit">Register Now</button>
+                                <?php endif; ?>
+                            </div>
+                            <div id="cnc-form-message" class="cnc-form-message"></div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        <?php if ($is_disabled) : ?>
+            return;
+        <?php endif; ?>
+        const form = document.getElementById('cnc-visitor-form');
+        const messageDiv = document.getElementById('cnc-form-message');
+        const ajaxUrl = '<?php echo esc_url(admin_url('admin-ajax.php')); ?>';
+        if (!form) {
+            return;
+        }
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = form.querySelector('button[type="submit"]');
+            const originalText = btn.innerText;
+            btn.innerText = 'Processing...';
+            btn.disabled = true;
+            btn.style.opacity = '0.7';
+            messageDiv.style.display = 'none';
+            messageDiv.className = 'cnc-form-message';
+            const data = new FormData(form);
+            fetch(ajaxUrl, {
+                method: 'POST',
+                body: data
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    messageDiv.innerText = data.data.message || 'Registration Successful! Check your email.';
+                    messageDiv.classList.add('success');
+                    form.reset();
+                } else {
+                    messageDiv.innerText = data.data.message || 'An error occurred. Please try again.';
+                    messageDiv.classList.add('error');
+                }
+            })
+            .catch(error => {
+                console.error('cnc visitor registration error', error);
+                messageDiv.innerText = 'Connection error. Please try again.';
+                messageDiv.classList.add('error');
+            })
+            .finally(() => {
+                btn.innerText = originalText;
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                messageDiv.style.display = 'block';
+            });
+        });
+    });
+    </script>
+    <?php
+    return ob_get_clean();
+}

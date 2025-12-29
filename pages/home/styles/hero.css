@@ -1,0 +1,32 @@
+.cnc-hero {
+    background: var(--gradient-primary);
+    text-align: center;
+}
+
+.cnc-hero h1 {
+    font-size: 46px;
+    margin-bottom: 16px;
+    color: #fff;
+    letter-spacing: -0.5px;
+}
+
+.cnc-hero .cnc-lead {
+    margin: 0 auto 22px auto;
+}
+
+.cnc-hero-actions {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+}
+
+.cnc-hero .cnc-cta-btn {
+    background: #cdff00;
+}
+
+.cnc-hero .cnc-cta-btn.secondary {
+    background: #fff;
+    color: #0d0d0d;
+}

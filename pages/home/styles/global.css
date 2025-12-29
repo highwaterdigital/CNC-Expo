@@ -1,0 +1,134 @@
+/* Global Styles - v7.0 */
+/* FIX: Removed complex breakout logic */
+.cnc-home-wrapper {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    position: relative;
+    background: var(--cnc-white);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.cnc-home-wrapper * {
+    box-sizing: border-box;
+}
+
+.cnc-home-wrapper p,
+.cnc-home-wrapper h1,
+.cnc-home-wrapper h2,
+.cnc-home-wrapper h3,
+.cnc-home-wrapper div {
+    margin: 0;
+    padding: 0;
+}
+
+.cnc-section-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 3rem;
+    color: var(--cnc-black);
+}
+
+/* Ensure inner content is centered */
+.cnc-section__content, 
+.cnc-hero__content,
+.cnc-container {
+    width: 100%;
+    max-width: 1400px !important; /* Updated to 1400px as requested */
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+    text-align: center;
+}
+
+.cnc-home-wrapper section {
+    width: 100%;
+}
+
+.cnc-section-subtitle {
+    font-size: 1.25rem !important;
+    color: #666 !important;
+    margin-bottom: 3rem !important;
+    max-width: 600px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Buttons */
+.cnc-btn {
+    display: inline-block;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: var(--cnc-transition);
+    border: 2px solid transparent;
+    cursor: pointer;
+    text-align: center;
+    min-width: 200px;
+}
+
+.cnc-btn--primary {
+    background: var(--cnc-gold);
+    color: var(--cnc-black);
+    border-color: var(--cnc-gold);
+}
+
+.cnc-btn--primary:hover {
+    background: transparent;
+    color: var(--cnc-gold);
+    border-color: var(--cnc-gold);
+    transform: translateY(-2px);
+}
+
+.cnc-btn--secondary {
+    background: transparent;
+    color: var(--cnc-white);
+    border-color: var(--cnc-white);
+}
+
+.cnc-btn--secondary:hover {
+    background: var(--cnc-white);
+    color: var(--cnc-red);
+    transform: translateY(-2px);
+}
+
+.cnc-btn--outline {
+    background: transparent !important;
+    color: var(--cnc-red) !important;
+    border-color: var(--cnc-red) !important;
+}
+
+.cnc-btn--outline:hover {
+    background: var(--cnc-red) !important;
+    color: white !important;
+}
+
+.cnc-btn--small {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.875rem !important;
+    min-width: auto !important;
+}
+
+.cnc-btn--large {
+    padding: 1.25rem 2.5rem !important;
+    font-size: 1.2rem !important;
+}
+
+/* Debug Styles */
+.cnc-debug-info {
+    position: fixed !important;
+    top: 10px !important;
+    left: 10px !important;
+    background: var(--cnc-red) !important;
+    color: white !important;
+    padding: 10px !important;
+    font-size: 12px !important;
+    border-radius: 5px !important;
+    z-index: 99999 !important;
+    font-family: monospace !important;
+}

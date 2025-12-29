@@ -1,0 +1,656 @@
+/* Admin Dashboard Styles */
+.expo-admin-dashboard {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.expo-admin-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    overflow: hidden;
+}
+
+.expo-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid #eee;
+    background: #fafafa;
+}
+
+.expo-card-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #333;
+}
+
+.expo-count {
+    color: #888;
+    font-weight: normal;
+    font-size: 0.9em;
+}
+
+.expo-admin-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.expo-admin-table th {
+    background: #f8f9fa;
+    color: #555;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    padding: 16px;
+    text-align: left;
+    border-bottom: 2px solid #eee;
+}
+
+.expo-admin-table td {
+    padding: 16px;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+    color: #444;
+    font-size: 0.9rem;
+}
+
+.expo-admin-table tr:last-child td {
+    border-bottom: none;
+}
+
+.expo-admin-table tr:hover {
+    background: #fcfcfc;
+}
+
+/* Status Badges */
+.expo-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.expo-status-pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.expo-status-approved {
+    background: #d4edda;
+    color: #155724;
+}
+
+.expo-status-rejected {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+/* Action Buttons */
+.expo-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.expo-btn-icon {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #f0f0f0;
+    font-size: 1.1rem;
+}
+
+.expo-btn-icon:hover {
+    transform: translateY(-2px);
+}
+
+.expo-btn-edit:hover { background: #e2e6ea; }
+.expo-btn-approve:hover { background: #d4edda; }
+.expo-btn-reject:hover { background: #f8d7da; }
+
+/* Modal Styles */
+.expo-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    backdrop-filter: blur(4px);
+}
+
+.expo-modal {
+    background: #fff;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+    animation: expoSlideUp 0.3s ease;
+}
+
+@keyframes expoSlideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.expo-modal-header {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.expo-modal-header h3 { margin: 0; font-size: 1.2rem; }
+
+.expo-modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #999;
+}
+
+.expo-modal-body {
+    padding: 24px;
+}
+
+.expo-form-group {
+    margin-bottom: 16px;
+}
+
+.expo-form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.expo-form-group input,
+.expo-form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+.expo-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.expo-btn--secondary {
+    background: #e9ecef;
+    color: #495057;
+}
+
+.expo-btn--sm {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+}
+
+/* Loading State */
+.expo-loading {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+    font-style: italic;
+}
+
+
+.expo-stall-map {
+	display: grid;
+	grid-template-columns: repeat(var(--expo-cols, 40), var(--expo-grid-size));
+	grid-template-rows: repeat(var(--expo-rows, 40), var(--expo-grid-size));
+	gap: 2px;
+	margin: 24px auto;
+	padding: 16px;
+	background: #fdfbf4;
+	border: 2px solid var(--expo-gold);
+	border-radius: 12px;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+	position: relative;
+}
+
+.expo-stall {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: calc(var(--expo-grid-size) * 2);
+	border-radius: 6px;
+	color: #0f1b16;
+	font-weight: 700;
+	font-size: 11px;
+	text-transform: uppercase;
+	cursor: pointer;
+	transition: transform 150ms ease, box-shadow 150ms ease;
+}
+
+.expo-stall:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.14);
+}
+
+.expo-stall.is-available {
+	outline: 2px solid var(--stall-available);
+}
+
+.expo-stall.is-pending {
+	outline: 2px solid var(--stall-pending);
+}
+
+.expo-stall.is-booked {
+	outline: 2px solid var(--stall-booked);
+	cursor: not-allowed;
+	opacity: 0.75;
+}
+
+.expo-stall__label {
+	pointer-events: none;
+}
+
+.expo-stall .badge {
+	position: absolute;
+	bottom: 4px;
+	right: 4px;
+	padding: 2px 6px;
+	border-radius: 999px;
+	font-size: 9px;
+	color: #fff;
+}
+
+.expo-stall .badge.available {
+	background: var(--stall-available);
+}
+
+.expo-stall .badge.pending {
+	background: var(--stall-pending);
+}
+
+.expo-stall .badge.booked {
+	background: var(--stall-booked);
+}
+
+.expo-block {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 11px;
+	text-align: center;
+	border-radius: 6px;
+	background: #e8eef1;
+	color: #36454f;
+}
+
+.expo-block--washroom {
+	background: #1d7fbf;
+	color: #fff;
+}
+
+.expo-block--feature,
+.expo-block--service {
+	background: #b8bec1;
+}
+
+.expo-block--fire-exit {
+	background: #f7d14c;
+}
+
+.expo-legend {
+	display: flex;
+	gap: 12px;
+	margin-bottom: 12px;
+	align-items: center;
+}
+
+.expo-legend__group {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 12px;
+	color: #2d3c35;
+}
+
+.expo-legend__group span {
+	display: inline-block;
+	width: 14px;
+	height: 14px;
+	border-radius: 3px;
+}
+
+.expo-compass-floating {
+	position: absolute;
+	top: 12px;
+	right: 12px;
+	width: 68px;
+	height: 68px;
+	border: 2px solid var(--expo-green);
+	border-radius: 50%;
+	display: grid;
+	place-items: center;
+	background: rgba(255, 255, 255, 0.9);
+	box-shadow: 0 12px 26px rgba(0, 0, 0, 0.12);
+	font-weight: 800;
+	color: var(--expo-green);
+}
+
+.expo-compass-floating__north { position: absolute; top: 6px; }
+.expo-compass-floating__south { position: absolute; bottom: 6px; }
+.expo-compass-floating__east { position: absolute; right: 8px; }
+.expo-compass-floating__west { position: absolute; left: 8px; }
+
+.expo-price-card {
+	margin-top: 16px;
+	padding: 16px;
+	border: 1px solid #dcd5b3;
+	border-radius: 10px;
+	background: #fffaf0;
+	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+
+.expo-price-card h3 {
+	margin: 0 0 8px;
+	color: var(--expo-green);
+}
+
+.expo-price-card ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.expo-price-card li {
+	margin: 4px 0;
+	font-size: 14px;
+}
+
+.expo-note {
+	margin-top: 8px;
+	color: #5c5c5c;
+	font-size: 12px;
+}
+
+.expo-modal {
+	position: fixed;
+	inset: 0;
+	z-index: 9999;
+	display: grid;
+	place-items: center;
+}
+
+.expo-modal__backdrop {
+	position: absolute;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.4);
+}
+
+.expo-modal__card {
+	position: relative;
+	background: #fff;
+	border-radius: 12px;
+	padding: 20px;
+	width: min(420px, 90vw);
+	box-shadow: 0 12px 36px rgba(0, 0, 0, 0.2);
+	z-index: 1;
+}
+
+.expo-modal__close {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	background: transparent;
+	border: none;
+	font-size: 20px;
+	cursor: pointer;
+}
+
+.expo-modal__status {
+	display: inline-block;
+	padding: 4px 10px;
+	border-radius: 999px;
+	margin: 6px 0 12px;
+	font-size: 12px;
+	color: #fff;
+}
+
+.expo-modal__status.status-available {
+	background: var(--stall-available);
+}
+
+.expo-modal__status.status-pending {
+	background: var(--stall-pending);
+	color: #000;
+}
+
+.expo-modal__status.status-booked {
+	background: var(--stall-booked);
+}
+
+.expo-modal__grid {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 8px 12px;
+	margin-bottom: 12px;
+}
+
+.expo-modal__grid div {
+	background: #f6f7f9;
+	border-radius: 8px;
+	padding: 10px;
+	font-size: 13px;
+}
+
+.expo-modal__grid strong {
+	display: block;
+	color: #4b4b4b;
+	margin-bottom: 3px;
+}
+
+.expo-modal__compass {
+	display: flex;
+	gap: 8px;
+	justify-content: center;
+	margin: 8px 0 12px;
+}
+
+.expo-modal__compass span {
+	width: 30px;
+	height: 30px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	background: #eef1f4;
+	font-weight: 700;
+	color: #1f2f26;
+}
+
+.expo-modal__cta {
+	display: flex;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
+.expo-btn {
+	border: none;
+	border-radius: 8px;
+	padding: 10px 14px;
+	font-weight: 700;
+	cursor: pointer;
+	text-decoration: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.expo-btn--primary {
+	background: var(--expo-green);
+	color: #fff;
+}
+
+.expo-btn--ghost {
+	background: #f1f1f1;
+	color: #1f2f26;
+}
+
+.expo-btn:active {
+	transform: translateY(1px);
+}
+
+.expo-modal__note {
+	margin-top: 12px;
+	color: #0b5e3c;
+	font-weight: 700;
+}
+
+.expo-error {
+	color: #b94a48;
+	font-weight: 600;
+}
+
+/* Dashboard */
+.expo-dashboard-section {
+	margin: 32px auto;
+	max-width: 960px;
+}
+
+.expo-card {
+	background: #fff;
+	border: 1px solid #e4e7ec;
+	border-radius: 10px;
+	padding: 16px;
+	margin-bottom: 16px;
+	box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+}
+
+.expo-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: 12px;
+}
+
+.expo-grid label {
+	display: grid;
+	gap: 6px;
+	font-size: 14px;
+	color: #2d3c35;
+}
+
+.expo-grid input,
+.expo-grid textarea {
+	width: 100%;
+	border: 1px solid #d0d7de;
+	border-radius: 8px;
+	padding: 8px 10px;
+	font-size: 14px;
+}
+
+.expo-grid .wide {
+	grid-column: 1 / -1;
+}
+
+.badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 999px;
+	padding: 4px 10px;
+	font-size: 12px;
+	color: #fff;
+}
+.badge-approved { background: var(--stall-available); }
+.badge-pending { background: var(--stall-pending); color: #000; }
+.badge-booked { background: var(--stall-booked); }
+.expo-muted { color: #6c757d; }
+
+/* Tab Navigation */
+.expo-dashboard-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.expo-dashboard-header h2 {
+    margin: 0;
+    font-size: 1.8rem;
+    color: #333;
+}
+
+.expo-tabs {
+    display: flex;
+    background: #fff;
+    padding: 4px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.expo-tab {
+    padding: 10px 20px;
+    border: none;
+    background: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    color: #666;
+    transition: all 0.2s;
+}
+
+.expo-tab:hover {
+    background: #f5f5f5;
+    color: #333;
+}
+
+.expo-tab.active {
+    background: var(--cnc-magenta, #C6308C);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(198, 48, 140, 0.3);
+}
+
+.expo-logout-link {
+    color: #dc3545;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 8px 16px;
+    border: 1px solid #dc3545;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.expo-logout-link:hover {
+    background: #dc3545;
+    color: #fff;
+}
+
+/* Profile Form */
+.expo-card-body {
+    padding: 24px;
+}
+
+.expo-form-actions {
+    margin-top: 24px;
+    text-align: right;
+}
