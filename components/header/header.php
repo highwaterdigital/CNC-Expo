@@ -24,6 +24,7 @@ if (!defined('ABSPATH')) exit;
     body { padding-top: var(--header-height) !important; }
     
     /* Admin Bar Fix */
+    #wpadminbar { z-index: 1000002 !important; }
     body.admin-bar .cnc-header { top: 32px; }
     @media (max-width: 782px) { body.admin-bar .cnc-header { top: 46px; } }
 
