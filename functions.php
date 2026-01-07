@@ -154,6 +154,15 @@ add_filter('show_admin_bar', function($show) {
 });
 
 /**
+ * Disable intermediate image sizes so only the original file is stored/served.
+ */
+function cnc_disable_intermediate_image_sizes($sizes) {
+    return array();
+}
+add_filter('intermediate_image_sizes_advanced', 'cnc_disable_intermediate_image_sizes', 10, 1);
+add_filter('big_image_size_threshold', '__return_false');
+
+/**
  * Force Single Exhibitor Template
  */
 function cnc_force_exhibitor_template($template) {
