@@ -46,12 +46,23 @@ if (!class_exists('CNC_Exhibitor_Bulk_Importer')) {
                 return $result;
             }
 
+            $existing_slugs = $this->get_existing_exhibitor_slugs();
+
             foreach ($files as $file_path) {
                 $slug = $this->slug_from_filename($file_path);
+                if ($slug === '') {
+                    $result['items'][] = array(
+                        'type' => 'error',
+                        'message' => 'Error: Unable to derive slug from ' . basename($file_path),
+                    );
+                    $result['errors']++;
+                    continue;
+                }
+
+                $normalized_slug = strtolower($slug);
                 $title = $this->title_from_slug($slug);
 
-                $existing = $this->find_existing_exhibitor($slug);
-                if ($existing) {
+                if (isset($existing_slugs[$normalized_slug])) {
                     $result['items'][] = array(
                         'type' => 'skipped',
                         'message' => 'Skipped: ' . $title . ' (already exists)',
@@ -83,6 +94,7 @@ if (!class_exists('CNC_Exhibitor_Bulk_Importer')) {
                 set_post_thumbnail($post_id, $attachment_id);
                 update_post_meta($post_id, self::META_IMPORT_SOURCE, 'bulk_script');
                 update_post_meta($post_id, self::META_LOGO_ATTACHED, 'yes');
+                $existing_slugs[$normalized_slug] = (int) $post_id;
 
                 $result['items'][] = array(
                     'type' => 'imported',
@@ -92,6 +104,34 @@ if (!class_exists('CNC_Exhibitor_Bulk_Importer')) {
             }
 
             return $result;
+        }
+
+        /**
+         * @return array
+         */
+        public function get_existing_exhibitor_slugs() {
+            $slugs = array();
+
+            $query = new WP_Query(
+                array(
+                    'post_type' => self::POST_TYPE,
+                    'post_status' => array('publish', 'draft', 'pending', 'private', 'trash'),
+                    'posts_per_page' => -1,
+                    'fields' => 'ids',
+                    'no_found_rows' => true,
+                )
+            );
+
+            foreach ($query->posts as $post_id) {
+                $slug = get_post_field('post_name', $post_id);
+                if ($slug !== '') {
+                    $slugs[strtolower($slug)] = (int) $post_id;
+                }
+            }
+
+            wp_reset_postdata();
+
+            return $slugs;
         }
 
         /**
@@ -118,7 +158,10 @@ if (!class_exists('CNC_Exhibitor_Bulk_Importer')) {
         public function scan_logo_files($source_dir) {
             $files = array();
 
-            $iterator = new DirectoryIterator($source_dir);
+            $iterator = new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator($source_dir, FilesystemIterator::SKIP_DOTS)
+            );
+
             foreach ($iterator as $fileinfo) {
                 if (!$fileinfo->isFile()) {
                     continue;
@@ -126,6 +169,11 @@ if (!class_exists('CNC_Exhibitor_Bulk_Importer')) {
 
                 $extension = strtolower($fileinfo->getExtension());
                 if (!in_array($extension, $this->allowed_extensions, true)) {
+                    continue;
+                }
+
+                $basename = pathinfo($fileinfo->getFilename(), PATHINFO_FILENAME);
+                if ($this->is_variant_filename($basename)) {
                     continue;
                 }
 
@@ -160,7 +208,20 @@ if (!class_exists('CNC_Exhibitor_Bulk_Importer')) {
          * @return WP_Post|null
          */
         public function find_existing_exhibitor($slug) {
-            return get_page_by_path($slug, OBJECT, self::POST_TYPE);
+            $query = new WP_Query(
+                array(
+                    'post_type' => self::POST_TYPE,
+                    'post_status' => array('publish', 'draft', 'pending', 'private', 'trash'),
+                    'name' => $slug,
+                    'posts_per_page' => 1,
+                )
+            );
+
+            if (empty($query->posts)) {
+                return null;
+            }
+
+            return $query->posts[0];
         }
 
         /**
@@ -271,7 +332,39 @@ if (!class_exists('CNC_Exhibitor_Bulk_Importer')) {
          * @return string
          */
         private function build_relative_path($file_path) {
+            $upload_dir = wp_get_upload_dir();
+            $base_dir = trailingslashit($upload_dir['basedir']);
+            $normalized_path = wp_normalize_path($file_path);
+            $normalized_base = wp_normalize_path($base_dir);
+
+            if (strpos($normalized_path, $normalized_base) === 0) {
+                $relative = ltrim(substr($normalized_path, strlen($normalized_base)), '/');
+                return $relative;
+            }
+
             return self::LOGO_SUBDIR . '/' . basename($file_path);
+        }
+
+        /**
+         * @param string $base_name
+         * @return bool
+         */
+        private function is_variant_filename($base_name) {
+            $base_name = strtolower($base_name);
+
+            if (preg_match('/-\\d+x\\d+$/', $base_name)) {
+                return true;
+            }
+
+            if (substr($base_name, -7) === '-scaled') {
+                return true;
+            }
+
+            if (substr($base_name, -8) === '-rotated') {
+                return true;
+            }
+
+            return false;
         }
     }
 }
