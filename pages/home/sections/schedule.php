@@ -151,15 +151,15 @@
         <div class="cnc-schedule-tabs">
             <div class="cnc-schedule-tab active" data-day="1">
                 <h3>Day 1</h3>
-                <span>Aug 14, 2026</span>
+                <span>Aug 13, 2026</span>
             </div>
             <div class="cnc-schedule-tab" data-day="2">
                 <h3>Day 2</h3>
-                <span>Aug 15, 2026</span>
+                <span>Aug 14, 2026</span>
             </div>
             <div class="cnc-schedule-tab" data-day="3">
                 <h3>Day 3</h3>
-                <span>Aug 16, 2026</span>
+                <span>Aug 15, 2026</span>
             </div>
         </div>
         <div class="cnc-schedule-content">

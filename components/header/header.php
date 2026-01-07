@@ -306,7 +306,7 @@ if (!defined('ABSPATH')) exit;
                 <div class="cnc-header__divider"></div>
 
                 <div class="cnc-header__date">
-                    <span>14-16 AUG 2026</span>
+                    <span>13-15 AUG 2026</span>
                     HITEX, Hyderabad
                 </div>
             </div>

@@ -519,7 +519,7 @@ if (!defined('ABSPATH')) exit;
             
             <div class="cnc-footer__event-info">
                 <div class="cnc-footer__event-label">Next Event</div>
-                <div class="cnc-footer__event-date">August 14-16, 2026 | HITEX, Hyderabad</div>
+                <div class="cnc-footer__event-date">August 13-15, 2026 | HITEX, Hyderabad</div>
             </div>
             
             <div class="cnc-footer__social">

@@ -1093,7 +1093,7 @@ ob_start();
         </div>
         
         <div class="cnc-hero__content">
-            <span class="cnc-hero__badge">August 14-16, 2026</span>
+            <span class="cnc-hero__badge">August 13-15, 2026</span>
             
             <h1>
                 INDIA'S<br>
@@ -1110,7 +1110,7 @@ ob_start();
                 <div class="cnc-hero__detail">
                     <span class="cnc-hero__detail-icon">📅</span>
                     <h3>Event Dates</h3>
-                    <p>August 14-16, 2026</p>
+                    <p>August 13-15, 2026</p>
                 </div>
                 <div class="cnc-hero__detail">
                     <span class="cnc-hero__detail-icon">📍</span>

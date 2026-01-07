@@ -274,7 +274,7 @@
         <!-- Additional Info Bar -->
         <div class="cnc-hero__info-bar">
             <div class="cnc-info-item">
-                <span class="cnc-info-value">14-16 Aug 2026</span>
+                <span class="cnc-info-value">13-15 Aug 2026</span>
                 <span class="cnc-info-label">Date</span>
             </div>
             <div class="cnc-info-item">
