@@ -107,7 +107,11 @@ function cnc_get_visitor_registration_form_html($is_disabled = false) {
         border-color: var(--cnc-magenta);
         box-shadow: 0 5px 15px rgba(0,0,0,0.05);
     }
-    .cnc-industry-icon { color: var(--cnc-magenta); }
+    .cnc-industry-icon {
+        color: var(--cnc-magenta);
+        font-size: 1.1rem;
+        line-height: 1;
+    }
     .cnc-form-section {
         padding: 80px 0 100px;
         background: var(--cnc-light);
@@ -219,17 +223,20 @@ function cnc_get_visitor_registration_form_html($is_disabled = false) {
                     <p class="cnc-profile-desc">We invite professionals from diverse backgrounds to explore the latest innovations in Cable TV, Broadband, IoT, and 5G.</p>
                     <div class="cnc-industry-grid">
                         <?php $industries = [
-                            ['icon' => 'ðŸ“¡', 'label' => 'ISPs & Cable Operators'],
-                            ['icon' => 'ðŸ“º', 'label' => 'Broadcast & OTT Players'],
-                            ['icon' => 'ðŸ˜ï¸', 'label' => 'Smart City Planners'],
-                            ['icon' => 'ðŸ“¶', 'label' => 'Telecom Engineers'],
-                            ['icon' => 'ðŸ—ï¸', 'label' => 'Infrastructure Developers'],
-                            ['icon' => 'ðŸ”’', 'label' => 'Security & Surveillance'],
-                            ['icon' => 'ðŸ’¾', 'label' => 'IT & Data Centers'],
-                            ['icon' => 'ðŸ›ï¸', 'label' => 'Government Officials']
+                            ['icon_class' => 'dashicons-networking', 'label' => 'ISPs & Cable Operators'],
+                            ['icon_class' => 'dashicons-video-alt3', 'label' => 'Broadcast & OTT Players'],
+                            ['icon_class' => 'dashicons-building', 'label' => 'Smart City Planners'],
+                            ['icon_class' => 'dashicons-admin-tools', 'label' => 'Telecom Engineers'],
+                            ['icon_class' => 'dashicons-admin-multisite', 'label' => 'Infrastructure Developers'],
+                            ['icon_class' => 'dashicons-shield', 'label' => 'Security & Surveillance'],
+                            ['icon_class' => 'dashicons-database', 'label' => 'IT & Data Centers'],
+                            ['icon_class' => 'dashicons-universal-access', 'label' => 'Government Officials']
                         ];
                         foreach ($industries as $industry) : ?>
-                            <div class="cnc-industry-item"><span class="cnc-industry-icon"><?php echo esc_html($industry['icon']); ?></span> <?php echo esc_html($industry['label']); ?></div>
+                            <div class="cnc-industry-item">
+                                <span class="cnc-industry-icon dashicons <?php echo esc_attr($industry['icon_class']); ?>" aria-hidden="true"></span>
+                                <?php echo esc_html($industry['label']); ?>
+                            </div>
                         <?php endforeach; ?>
                     </div>
                 </div>
@@ -333,3 +340,6 @@ function cnc_get_visitor_registration_form_html($is_disabled = false) {
     <?php
     return ob_get_clean();
 }
+
+
+

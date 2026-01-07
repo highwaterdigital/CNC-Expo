@@ -154,6 +154,14 @@ add_filter('show_admin_bar', function($show) {
 });
 
 /**
+ * Ensure dashicons are available on the frontend for shortcode icons.
+ */
+function cnc_enqueue_frontend_dashicons() {
+    wp_enqueue_style('dashicons');
+}
+add_action('wp_enqueue_scripts', 'cnc_enqueue_frontend_dashicons');
+
+/**
  * Disable intermediate image sizes so only the original file is stored/served.
  */
 function cnc_disable_intermediate_image_sizes($sizes) {
