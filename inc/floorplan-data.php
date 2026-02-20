@@ -86,6 +86,15 @@ function cnc_get_floorplan_data() {
             $w = intval($item['w']);
             $h = intval($item['h']);
             $area = isset($item['area']) ? $item['area'] : ($w * $h); // Approximate if missing
+            
+            // Check if this is a common area (non-clickable)
+            $common_area_types = [
+                'fire-exit', 'entry', 'exit', 'freight-entry', 'washroom', 
+                'stairs', 'stage', 'service', 'registration', 'lounge', 
+                'storage', 'electrical', 'pillar', 'corridor', 'blank', 'custom-area',
+                'food-court', 'networking'
+            ];
+            $is_common_area = isset($item['is_common_area']) ? $item['is_common_area'] : in_array($type, $common_area_types);
 
             $stalls[] = [
                 'id' => $id,
@@ -102,7 +111,15 @@ function cnc_get_floorplan_data() {
                 'post_id' => $post_id,
                 'fill' => isset($item['fill']) ? $item['fill'] : '',
                 'border' => isset($item['border']) ? $item['border'] : '',
-                'custom_color' => isset($item['custom_color']) ? $item['custom_color'] : ''
+                'custom_color' => isset($item['custom_color']) ? $item['custom_color'] : '',
+                // New Common Area Fields
+                'display_label' => isset($item['display_label']) ? $item['display_label'] : '',
+                'text_dir' => isset($item['text_dir']) ? $item['text_dir'] : 'horizontal',
+                'text_color' => isset($item['text_color']) ? $item['text_color'] : '#ffffff',
+                'font_size' => isset($item['font_size']) ? $item['font_size'] : 'auto',
+                'show_border' => isset($item['show_border']) ? $item['show_border'] : false,
+                'border_color' => isset($item['border_color']) ? $item['border_color'] : '#333333',
+                'is_common_area' => $is_common_area
             ];
         }
     }

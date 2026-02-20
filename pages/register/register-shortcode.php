@@ -185,8 +185,44 @@ $ajax_url = admin_url('admin-ajax.php');
 
 .type-fire-exit { background: #E74C3C; color: white; border: 1px solid #C0392B; font-weight: bold; }
 .type-washroom { background: #3498DB; color: white; border: 1px solid #2980B9; }
-.type-service { background: #95A5A6; color: white; border: 1px solid #7F8C8D; font-size: 8px; }
+.type-service { background: #9B59B6; color: white; border: 1px solid #8E44AD; font-size: 9px; }
 .type-entry { background: #F39C12; color: white; border: 1px solid #E67E22; font-weight: 800; font-size: 12px; letter-spacing: 1px; }
+.type-exit { background: #E67E22; color: white; border: 1px solid #D35400; font-weight: 800; }
+.type-freight-entry { background: #95A5A6; color: white; border: 1px solid #7F8C8D; font-weight: 600; }
+.type-stairs { background: #34495E; color: white; border: 1px solid #2C3E50; }
+.type-stage { background: #1ABC9C; color: white; border: 1px solid #16A085; font-weight: 700; }
+.type-registration { background: #9B59B6; color: white; border: 1px solid #8E44AD; }
+.type-lounge { background: #27AE60; color: white; border: 1px solid #1E8449; }
+.type-storage { background: #7F8C8D; color: white; border: 1px solid #626567; }
+.type-electrical { background: #F1C40F; color: #333; border: 1px solid #D4AC0D; }
+.type-pillar { background: #34495E; color: white; border: 1px solid #1C2833; }
+.type-corridor { background: #27AE60; color: white; border: 1px solid #1E8449; opacity: 0.7; }
+.type-blank { background: #ECF0F1; color: #666; border: 1px solid #BDC3C7; }
+.type-custom-area { background: #8E44AD; color: white; border: 1px solid #6C3483; }
+.type-feature { background: #FFC107; color: #333; border: 1px solid #F39C12; cursor: default; }
+.type-food-court { background: #E74C3C; color: white; border: 1px solid #C0392B; }
+.type-networking { background: #2ECC71; color: white; border: 1px solid #27AE60; }
+
+/* Common Area Styles - Non-clickable */
+.stall.common-area {
+    cursor: default;
+    pointer-events: none;
+}
+.stall.common-area::after { display: none; } /* No tooltip */
+
+/* Text Direction Classes */
+.stall .item-label.text-vertical-up {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+}
+.stall .item-label.text-vertical-down {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+}
+.stall .item-label.text-horizontal {
+    writing-mode: horizontal-tb;
+}
 
 .stall.selected {
     background: var(--bms-dark);
@@ -288,13 +324,62 @@ $ajax_url = admin_url('admin-ajax.php');
 
             <div class="cnc-grid">
                 
-                <?php foreach($stalls as $s): 
+                <?php 
+                // Common area types (non-clickable)
+                $common_area_types = [
+                    'fire-exit', 'entry', 'exit', 'freight-entry', 'washroom', 
+                    'stairs', 'stage', 'service', 'registration', 'lounge', 
+                    'storage', 'electrical', 'pillar', 'corridor', 'blank', 'custom-area',
+                    'food-court', 'networking', 'feature'
+                ];
+                
+                foreach($stalls as $s): 
+                    $type = isset($s['type']) ? $s['type'] : 'stall';
+                    $is_common_area = isset($s['is_common_area']) ? $s['is_common_area'] : in_array($type, $common_area_types);
+                    
                     $classes = 'stall status-' . $s['status'];
-                    if(isset($s['type'])) $classes .= ' type-' . $s['type'];
+                    $classes .= ' type-' . $type;
+                    if ($is_common_area) {
+                        $classes .= ' common-area';
+                    }
                     
                     $style = "grid-row: {$s['r']} / span {$s['h']}; grid-column: {$s['c']} / span {$s['w']};";
+                    
+                    // Custom Color Logic
+                    if (!empty($s['custom_color'])) {
+                        $style .= " background-color: " . esc_attr($s['custom_color']) . ";";
+                        $style .= " border-color: " . esc_attr($s['custom_color']) . ";";
+                    }
+                    
+                    // Text Color
+                    if (!empty($s['text_color'])) {
+                        $style .= " color: " . esc_attr($s['text_color']) . ";";
+                    }
+                    
+                    // Font Size
+                    if (!empty($s['font_size']) && $s['font_size'] !== 'auto') {
+                        $style .= " font-size: " . intval($s['font_size']) . "px;";
+                    }
+                    
+                    // Border
+                    if (!empty($s['show_border']) && !empty($s['border_color'])) {
+                        $style .= " border: 2px solid " . esc_attr($s['border_color']) . ";";
+                    } elseif ($is_common_area && empty($s['show_border'])) {
+                        $style .= " border: none;";
+                    }
+                    
+                    // Legacy fill/border support
                     if(!empty($s['fill'])) $style .= " background-color: {$s['fill']};";
                     if(!empty($s['border'])) $style .= " border-color: {$s['border']};";
+                    
+                    // Text Direction Class
+                    $text_dir_class = '';
+                    if (!empty($s['text_dir']) && $s['text_dir'] !== 'horizontal') {
+                        $text_dir_class = 'text-' . $s['text_dir'];
+                    }
+                    
+                    // Display Label
+                    $display_label = !empty($s['display_label']) ? $s['display_label'] : str_replace('3.', '', $s['id']);
                 ?>
                     <div class="<?php echo $classes; ?>"
                          style="<?php echo $style; ?>"
@@ -303,10 +388,17 @@ $ajax_url = admin_url('admin-ajax.php');
                          data-area="<?php echo $s['area']; ?>"
                          data-dim="<?php echo $s['dim']; ?>"
                          data-status="<?php echo $s['status']; ?>"
-                         data-type="<?php echo esc_attr($s['type'] ?? 'stall'); ?>"
+                         data-type="<?php echo esc_attr($type); ?>"
                          data-company="<?php echo esc_attr($s['company']); ?>"
-                         data-link="<?php echo esc_attr($s['link'] ?? ''); ?>">
-                        <?php echo str_replace('3.', '', $s['id']); ?>
+                         data-link="<?php echo esc_attr($s['link'] ?? ''); ?>"
+                         data-common-area="<?php echo $is_common_area ? '1' : '0'; ?>">
+                        <span class="item-label <?php echo $text_dir_class; ?>"><?php echo esc_html($display_label); ?></span>
+                        
+                        <?php 
+                        // Add Green Line Indicator for Available Stalls
+                        if ($s['status'] === 'available' && $type === 'stall' && !$is_common_area): ?>
+                            <div style="position:absolute; bottom:0; left:0; width:100%; height:3px; background:#27AE60;"></div>
+                        <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
                 
@@ -454,7 +546,8 @@ function updateStickySummary() {
 // Stall Click Handler
 document.querySelectorAll('.stall').forEach(stall => {
     stall.addEventListener('click', function() {
-        // DISABLE CLICK FOR NON-STALLS (Washrooms, Exits, etc.)
+        // DISABLE CLICK FOR COMMON AREAS (Washrooms, Exits, Stairs, etc.)
+        if (this.dataset.commonArea === '1') return;
         if (this.dataset.type && this.dataset.type !== 'stall') return;
 
         const status = this.dataset.status;

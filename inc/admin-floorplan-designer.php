@@ -152,6 +152,7 @@ function cnc_render_designer_page() {
             
             <div class="toolbar-group">
                 <button class="button" id="btn-add-stall" title="Add 3x3 Stall">+ Stall</button>
+                <button class="button" id="btn-add-common-area" title="Add Common Area" style="background:#9B59B6; color:white; border-color:#8E44AD;">+ Common Area</button>
                 <button class="button" id="btn-merge" title="Merge Selected Items (Same ID)">🔗 Merge</button>
                 <button class="button" id="btn-json-io" title="Import/Export JSON">JSON</button>
                 <button class="button" id="btn-import-default" title="Reset to Default Layout (hall3_layout.json)">📥 Import Default</button>
@@ -194,29 +195,81 @@ function cnc_render_designer_page() {
             <div class="form-row">
                 <label>Type</label>
                 <select id="input-type">
-                    <option value="stall">Stall (Standard)</option>
-                    <option value="fire-exit">Fire Exit</option>
-                    <option value="washroom">Washroom</option>
-                    <option value="service">Service / Info</option>
-                    <option value="entry">Entry / Exit</option>
+                    <optgroup label="🏢 Stalls (Clickable)">
+                        <option value="stall">Stall (Standard)</option>
+                    </optgroup>
+                    <optgroup label="🚧 Common Areas (Non-Clickable)">
+                        <option value="fire-exit">🚨 Fire Exit</option>
+                        <option value="entry">🚪 Entry</option>
+                        <option value="exit">🚪 Exit</option>
+                        <option value="freight-entry">🚚 Freight Entry</option>
+                        <option value="washroom">🚻 Washroom / Toilets</option>
+                        <option value="stairs">🪜 Stairs / Steps</option>
+                        <option value="stage">🎤 Stage / Podium</option>
+                        <option value="service">ℹ️ Service / Info Room</option>
+                        <option value="registration">📋 Registration Desk</option>
+                        <option value="lounge">🛋️ Lounge / Waiting Area</option>
+                        <option value="storage">📦 Storage Room</option>
+                        <option value="electrical">⚡ Electrical Room</option>
+                        <option value="pillar">⬜ Pillar / Obstruction</option>
+                        <option value="corridor">➡️ Corridor / Pathway</option>
+                        <option value="blank">⬜ Blank Space</option>
+                        <option value="custom-area">✏️ Custom Common Area</option>
+                    </optgroup>
+                    <optgroup label="✨ Special Features">
+                        <option value="feature">⭐ Feature / Sponsor Zone</option>
+                        <option value="food-court">🍽️ Food Court</option>
+                        <option value="networking">🤝 Networking Zone</option>
+                    </optgroup>
                 </select>
+            </div>
+            
+            <!-- Text Direction -->
+            <div class="form-row">
+                <label>Text Direction</label>
+                <div class="text-direction-btns">
+                    <button type="button" class="btn-text-dir active" data-dir="horizontal" title="Horizontal">➡️ Horizontal</button>
+                    <button type="button" class="btn-text-dir" data-dir="vertical-up" title="Vertical (Up)">⬆️ Vertical Up</button>
+                    <button type="button" class="btn-text-dir" data-dir="vertical-down" title="Vertical (Down)">⬇️ Vertical Down</button>
+                </div>
+                <input type="hidden" id="input-text-dir" value="horizontal">
             </div>
             <div class="form-row">
                 <label>ID / Label (Same ID = Merged Stall)</label>
                 <input type="text" id="input-id" placeholder="e.g. 3.A 1">
             </div>
             <div class="form-row">
+                <label>Display Label (Optional - shows on map)</label>
+                <input type="text" id="input-display-label" placeholder="e.g. WASHROOMS, FIRE EXIT">
+                <small style="color:#666;">Leave empty to use ID as label</small>
+            </div>
+            <div class="form-row">
                 <label>Dimensions</label>
                 <span id="disp-dims">--</span>
             </div>
-            <div class="form-row">
-                <label>Status / Color Theme</label>
+            <div class="form-row stall-only-option">
+                <label>Status / Color Theme (Stalls Only)</label>
                 <select id="input-color-theme">
                     <option value="available">Available (Green)</option>
                     <option value="booked">Booked (Grey)</option>
                     <option value="reserved">Reserved (Orange)</option>
-                    <option value="exit">Fire Exit (Red)</option>
-                    <option value="washroom">Washroom (Blue)</option>
+                    <option value="pending">Pending (Orange)</option>
+                </select>
+            </div>
+            <div class="form-row common-area-colors" style="display:none;">
+                <label>Common Area Color Presets</label>
+                <select id="input-common-color">
+                    <option value="">-- Select Preset Color --</option>
+                    <option value="#E74C3C">🔴 Red (Fire Exit)</option>
+                    <option value="#3498DB">🔵 Blue (Washroom)</option>
+                    <option value="#9B59B6">🟣 Purple (Info Room)</option>
+                    <option value="#F39C12">🟠 Orange (Entry/Exit)</option>
+                    <option value="#1ABC9C">🟢 Teal (Stage)</option>
+                    <option value="#34495E">⚫ Dark Gray (Pillar)</option>
+                    <option value="#95A5A6">⚪ Light Gray (Freight/Storage)</option>
+                    <option value="#27AE60">🟢 Green (Corridor)</option>
+                    <option value="#FFC107">🟡 Yellow (Feature)</option>
+                    <option value="#E91E63">💜 Magenta (VIP/Sponsor)</option>
                 </select>
             </div>
             <div class="form-row">
@@ -236,10 +289,40 @@ function cnc_render_designer_page() {
             </div>
             <div class="form-row">
                 <label>Custom Color (Manual Override)</label>
-                <div style="display:flex; gap:10px;">
+                <div style="display:flex; gap:10px; align-items:center;">
                     <input type="color" id="input-custom-color" value="#ffffff" style="width:50px; height:30px; padding:0;">
+                    <input type="text" id="input-custom-color-hex" placeholder="#FFFFFF" style="width:80px; font-family:monospace;">
                     <button class="button" id="btn-clear-color" style="font-size:11px;">Clear</button>
                 </div>
+            </div>
+            <div class="form-row">
+                <label>Text Color</label>
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <input type="color" id="input-text-color" value="#ffffff" style="width:50px; height:30px; padding:0;">
+                    <select id="input-text-color-preset" style="flex:1;">
+                        <option value="#ffffff">White</option>
+                        <option value="#000000">Black</option>
+                        <option value="#333333">Dark Gray</option>
+                        <option value="#f0f0f0">Light Gray</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <label>Font Size</label>
+                <select id="input-font-size">
+                    <option value="auto">Auto (Based on Size)</option>
+                    <option value="8">8px - Tiny</option>
+                    <option value="10">10px - Small</option>
+                    <option value="12">12px - Medium</option>
+                    <option value="14">14px - Large</option>
+                    <option value="18">18px - X-Large</option>
+                </select>
+            </div>
+            <div class="form-row">
+                <label>
+                    <input type="checkbox" id="input-show-border"> Show Border
+                </label>
+                <input type="color" id="input-border-color" value="#333333" style="width:50px; height:25px; padding:0; margin-left:10px;">
             </div>
             <div class="form-actions">
                 <button class="button button-primary" id="btn-add">Update / Add</button>
@@ -383,12 +466,76 @@ function cnc_render_designer_page() {
         .status-booked { background: var(--bms-grey); border-color: #95A5A6; color: #555; }
         .status-reserved { background: var(--bms-orange); border-color: #D35400; }
         
-        /* Type Overrides */
-        .item-fire-exit, .status-exit { background: var(--bms-red); border-color: #C0392B; font-weight: bold; }
-        .item-washroom, .status-washroom { background: var(--bms-blue); border-color: #2980B9; }
-        .item-service { background: #95A5A6; border-color: #7F8C8D; font-size: 9px; }
-        .item-entry { background: var(--bms-orange); border-color: #E67E22; font-weight: 800; letter-spacing: 1px; }
+        /* Type Overrides - Common Areas */
+        .item-fire-exit, .status-exit { background: #E74C3C; border-color: #C0392B; font-weight: bold; }
+        .item-washroom, .status-washroom { background: #3498DB; border-color: #2980B9; }
+        .item-service { background: #9B59B6; border-color: #8E44AD; font-size: 9px; }
+        .item-entry { background: #F39C12; border-color: #E67E22; font-weight: 800; letter-spacing: 1px; }
+        .item-exit { background: #E67E22; border-color: #D35400; font-weight: 800; }
+        .item-freight-entry { background: #95A5A6; border-color: #7F8C8D; font-weight: 600; }
+        .item-stairs { background: #34495E; border-color: #2C3E50; }
+        .item-stage { background: #1ABC9C; border-color: #16A085; font-weight: 700; }
+        .item-registration { background: #9B59B6; border-color: #8E44AD; }
+        .item-lounge { background: #27AE60; border-color: #1E8449; }
+        .item-storage { background: #7F8C8D; border-color: #626567; }
+        .item-electrical { background: #F1C40F; border-color: #D4AC0D; color: #333; }
+        .item-pillar { background: #34495E; border-color: #1C2833; }
+        .item-corridor { background: #27AE60; border-color: #1E8449; opacity: 0.7; }
+        .item-blank { background: #ECF0F1; border-color: #BDC3C7; color: #666; }
+        .item-custom-area { background: #8E44AD; border-color: #6C3483; }
         .item-feature { background: #FFC107; border-color: #F39C12; color: #333; }
+        .item-food-court { background: #E74C3C; border-color: #C0392B; }
+        .item-networking { background: #2ECC71; border-color: #27AE60; }
+        
+        /* Common Area Badge - Non-clickable indicator */
+        .design-item.common-area::after {
+            content: '🔒';
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            font-size: 8px;
+            opacity: 0.7;
+        }
+        
+        /* Text Direction Classes */
+        .text-vertical-up {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            transform: rotate(180deg);
+        }
+        .text-vertical-down {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+        }
+        .text-horizontal {
+            writing-mode: horizontal-tb;
+        }
+        
+        /* Text Direction Buttons in Modal */
+        .text-direction-btns {
+            display: flex;
+            gap: 5px;
+        }
+        .btn-text-dir {
+            flex: 1;
+            padding: 8px 5px;
+            border: 2px solid #ddd;
+            background: #f9f9f9;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 11px;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .btn-text-dir:hover {
+            background: #e9e9e9;
+            border-color: #bbb;
+        }
+        .btn-text-dir.active {
+            background: #0073aa;
+            color: white;
+            border-color: #005177;
+        }
 
         /* Resize Handles */
         .ui-resizable-handle { display: none; }
@@ -413,7 +560,9 @@ function cnc_render_designer_page() {
             box-shadow: 0 0 20px rgba(0,0,0,0.2);
             border-radius: 5px;
             z-index: 1000;
-            width: 300px;
+            width: 380px;
+            max-height: 90vh;
+            overflow-y: auto;
             display: none;
             border: 1px solid #ccc;
         }
@@ -511,6 +660,42 @@ function cnc_render_designer_page() {
         let startCell = null;
         let currentSelectionRect = null;
 
+        // Common Area Types (non-clickable on frontend)
+        const COMMON_AREA_TYPES = [
+            'fire-exit', 'entry', 'exit', 'freight-entry', 'washroom', 
+            'stairs', 'stage', 'service', 'registration', 'lounge', 
+            'storage', 'electrical', 'pillar', 'corridor', 'blank', 'custom-area',
+            'food-court', 'networking'
+        ];
+        
+        // Helper: Darken a hex color
+        function darkenColor(hex, percent) {
+            hex = hex.replace('#', '');
+            let r = parseInt(hex.substring(0,2), 16);
+            let g = parseInt(hex.substring(2,4), 16);
+            let b = parseInt(hex.substring(4,6), 16);
+            r = Math.floor(r * (100 - percent) / 100);
+            g = Math.floor(g * (100 - percent) / 100);
+            b = Math.floor(b * (100 - percent) / 100);
+            return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+        }
+        
+        // Helper: Check if type is common area
+        function isCommonAreaType(type) {
+            return COMMON_AREA_TYPES.includes(type);
+        }
+        
+        // Toggle form sections based on type
+        function updateFormSections(type) {
+            if (isCommonAreaType(type)) {
+                $('.stall-only-option').hide();
+                $('.common-area-colors').show();
+            } else {
+                $('.stall-only-option').show();
+                $('.common-area-colors').hide();
+            }
+        }
+
         // 2. Render Items
         function renderItems() {
             overlayEl.empty();
@@ -524,10 +709,14 @@ function cnc_render_designer_page() {
             // grid-column: start / span width
             // grid-row: start / span height
             
-            let label = (item.id || '').replace('3.', ''); 
+            // Use display_label if set, otherwise use ID
+            let label = item.display_label || (item.id || '').replace('3.', '');
             
-            let el = $(`<div class="design-item item-${item.type}" data-index="${index}" title="${item.id}">
-                ${label}
+            // Check if this is a common area (non-clickable)
+            let isCommonArea = COMMON_AREA_TYPES.includes(item.type);
+            
+            let el = $(`<div class="design-item item-${item.type} ${isCommonArea ? 'common-area' : ''}" data-index="${index}" title="${item.id}">
+                <span class="item-label">${label}</span>
             </div>`);
             
             // Apply Grid Styles directly
@@ -542,22 +731,45 @@ function cnc_render_designer_page() {
             el.css('--drag-width', pixelW + 'px');
             el.css('--drag-height', pixelH + 'px');
             
-            // Apply Status Class if exists
-            if(item.status) {
+            // Apply Status Class if exists (only for stalls)
+            if(item.type === 'stall' && item.status) {
                 el.addClass('status-' + item.status);
-            } else {
-                // Default status based on type if not set
-                if(item.type === 'stall') el.addClass('status-available');
+            } else if(item.type === 'stall') {
+                el.addClass('status-available');
             }
 
-            // Apply Custom Color (Only if Available or Feature)
-            if (item.custom_color && (item.status === 'available' || !item.status || item.type === 'feature')) {
+            // Apply Custom Color
+            if (item.custom_color) {
                 el.css('background-color', item.custom_color);
-                el.css('border-color', item.custom_color); // Or darken it?
-                // Add visual indicator for availability if it's a stall
-                if (item.type === 'stall') {
-                    el.append('<div style="position:absolute; bottom:0; left:0; width:100%; height:3px; background:#27AE60;"></div>');
-                }
+                // Darken border color
+                el.css('border-color', darkenColor(item.custom_color, 20));
+            }
+            
+            // Apply Text Color
+            if (item.text_color) {
+                el.css('color', item.text_color);
+            }
+            
+            // Apply Font Size
+            if (item.font_size && item.font_size !== 'auto') {
+                el.css('font-size', item.font_size + 'px');
+            }
+            
+            // Apply Text Direction
+            if (item.text_dir) {
+                el.find('.item-label').addClass('text-' + item.text_dir);
+            }
+            
+            // Apply Border
+            if (item.show_border && item.border_color) {
+                el.css('border', '2px solid ' + item.border_color);
+            } else if (!item.show_border && isCommonArea) {
+                el.css('border', 'none');
+            }
+            
+            // Add visual indicator for stall availability
+            if (item.type === 'stall' && item.custom_color && (item.status === 'available' || !item.status)) {
+                el.append('<div style="position:absolute; bottom:0; left:0; width:100%; height:3px; background:#27AE60;"></div>');
             }
             
             if(selectedIndices.includes(index)) el.addClass('selected');
@@ -858,10 +1070,35 @@ function cnc_render_designer_page() {
                 let item = items[selectedIndices[0]];
                 $('#input-type').val(item.type || 'stall');
                 $('#input-id').val(item.id);
+                $('#input-display-label').val(item.display_label || '');
                 $('#input-color-theme').val(item.status || 'available');
                 
                 let cColor = item.custom_color || '#ffffff';
                 $('#input-custom-color').val(cColor);
+                $('#input-custom-color-hex').val(cColor);
+                
+                // Text Direction
+                let textDir = item.text_dir || 'horizontal';
+                $('#input-text-dir').val(textDir);
+                $('.btn-text-dir').removeClass('active');
+                $(`.btn-text-dir[data-dir="${textDir}"]`).addClass('active');
+                
+                // Text Color
+                $('#input-text-color').val(item.text_color || '#ffffff');
+                
+                // Font Size
+                $('#input-font-size').val(item.font_size || 'auto');
+                
+                // Border
+                $('#input-show-border').prop('checked', item.show_border || false);
+                $('#input-border-color').val(item.border_color || '#333333');
+                
+                // Common area preset color
+                if(isCommonAreaType(item.type) && item.custom_color) {
+                    $('#input-common-color').val(item.custom_color);
+                } else {
+                    $('#input-common-color').val('');
+                }
                 
                 // Sync category dropdown
                 let found = false;
@@ -876,32 +1113,77 @@ function cnc_render_designer_page() {
                 $('#disp-dims').text(`${item.w}m x ${item.h}m`);
                 $('#btn-add').text('Update');
                 $('#btn-delete').show();
+                
+                // Update form sections based on type
+                updateFormSections(item.type || 'stall');
             } else {
                 // Add New
                 $('#input-type').val('stall');
                 $('#input-id').val('');
+                $('#input-display-label').val('');
                 $('#input-color-theme').val('available');
-                $('#input-custom-color').val('#ffffff'); // Default
+                $('#input-custom-color').val('#ffffff');
+                $('#input-custom-color-hex').val('#ffffff');
                 $('#input-category-color').val("");
+                $('#input-common-color').val("");
+                
+                // Reset text direction
+                $('#input-text-dir').val('horizontal');
+                $('.btn-text-dir').removeClass('active');
+                $('.btn-text-dir[data-dir="horizontal"]').addClass('active');
+                
+                // Reset text color, font size, border
+                $('#input-text-color').val('#ffffff');
+                $('#input-font-size').val('auto');
+                $('#input-show-border').prop('checked', false);
+                $('#input-border-color').val('#333333');
+                
                 $('#disp-dims').text(`${currentSelectionRect.w}m x ${currentSelectionRect.h}m`);
                 $('#btn-add').text('Add');
                 $('#btn-delete').hide();
+                
+                // Show stall options by default
+                updateFormSections('stall');
             }
             modal.show();
             $('#input-id').focus();
         }
+        
+        // Type change handler
+        $('#input-type').change(function() {
+            updateFormSections($(this).val());
+        });
+        
+        // Text Direction Buttons
+        $('.btn-text-dir').click(function(e) {
+            e.preventDefault();
+            $('.btn-text-dir').removeClass('active');
+            $(this).addClass('active');
+            $('#input-text-dir').val($(this).data('dir'));
+        });
 
         // Sync Category -> Custom Color
         $('#input-category-color').change(function() {
             let val = $(this).val();
             if(val) {
                 $('#input-custom-color').val(val);
+                $('#input-custom-color-hex').val(val);
+            }
+        });
+        
+        // Sync Common Area Preset -> Custom Color
+        $('#input-common-color').change(function() {
+            let val = $(this).val();
+            if(val) {
+                $('#input-custom-color').val(val);
+                $('#input-custom-color-hex').val(val);
             }
         });
 
-        // Sync Custom Color -> Category (if match found)
+        // Sync Custom Color -> Hex Input
         $('#input-custom-color').change(function() {
              let val = $(this).val();
+             $('#input-custom-color-hex').val(val);
              let found = false;
              $('#input-category-color option').each(function() {
                 if($(this).val().toLowerCase() === val.toLowerCase()) {
@@ -911,19 +1193,40 @@ function cnc_render_designer_page() {
              });
              if(!found) $('#input-category-color').val("");
         });
+        
+        // Sync Hex Input -> Color Picker
+        $('#input-custom-color-hex').on('blur change', function() {
+            let val = $(this).val();
+            if(/^#[0-9A-Fa-f]{6}$/.test(val)) {
+                $('#input-custom-color').val(val);
+            }
+        });
+        
+        // Sync Text Color Preset -> Picker
+        $('#input-text-color-preset').change(function() {
+            $('#input-text-color').val($(this).val());
+        });
 
         $('#btn-cancel').click(function() { modal.hide(); });
         
         $('#btn-clear-color').click(function(e) {
             e.preventDefault();
             $('#input-custom-color').val('#ffffff');
+            $('#input-custom-color-hex').val('#ffffff');
         });
         
         $('#btn-add').click(function() {
             let type = $('#input-type').val();
             let id = $('#input-id').val();
-            let status = $('#input-color-theme').val();
+            let displayLabel = $('#input-display-label').val().trim();
+            let status = isCommonAreaType(type) ? 'service' : $('#input-color-theme').val();
             let customColor = $('#input-custom-color').val();
+            let textDir = $('#input-text-dir').val();
+            let textColor = $('#input-text-color').val();
+            let fontSize = $('#input-font-size').val();
+            let showBorder = $('#input-show-border').is(':checked');
+            let borderColor = $('#input-border-color').val();
+            
             if (customColor === '#ffffff') customColor = ''; // Treat white as empty/default
             
             if(!id) { alert('Enter ID'); return; }
@@ -933,20 +1236,37 @@ function cnc_render_designer_page() {
                 selectedIndices.forEach(idx => {
                     items[idx].type = type;
                     items[idx].id = id;
+                    items[idx].display_label = displayLabel;
                     items[idx].status = status;
                     items[idx].custom_color = customColor;
+                    items[idx].text_dir = textDir;
+                    items[idx].text_color = textColor;
+                    items[idx].font_size = fontSize;
+                    items[idx].show_border = showBorder;
+                    items[idx].border_color = borderColor;
+                    items[idx].is_common_area = isCommonAreaType(type);
                     if(type === 'stall') items[idx].price = items[idx].area * 11500;
                 });
             } else if (currentSelectionRect) {
                 // Create New from Marquee
                 let newItem = {
-                    id: id, type: type,
-                    r: currentSelectionRect.r, c: currentSelectionRect.c,
-                    h: currentSelectionRect.h, w: currentSelectionRect.w,
+                    id: id, 
+                    type: type,
+                    display_label: displayLabel,
+                    r: currentSelectionRect.r, 
+                    c: currentSelectionRect.c,
+                    h: currentSelectionRect.h, 
+                    w: currentSelectionRect.w,
                     area: currentSelectionRect.h * currentSelectionRect.w,
                     dim: `${currentSelectionRect.w}x${currentSelectionRect.h}`,
                     status: status,
-                    custom_color: customColor
+                    custom_color: customColor,
+                    text_dir: textDir,
+                    text_color: textColor,
+                    font_size: fontSize,
+                    show_border: showBorder,
+                    border_color: borderColor,
+                    is_common_area: isCommonAreaType(type)
                 };
                 if(type === 'stall') newItem.price = newItem.area * 11500;
                 items.push(newItem);
@@ -986,6 +1306,46 @@ function cnc_render_designer_page() {
             // Select it
             selectedIndices = [items.length - 1];
             renderSelectionState();
+        });
+        
+        // Add Common Area Button
+        $('#btn-add-common-area').click(function() {
+            // Find an empty spot
+            let r = 1, c = 1;
+            let collision = items.some(i => i.r === 1 && i.c === 1);
+            if(collision) {
+                for(let tr=1; tr<15; tr+=3) {
+                    for(let tc=1; tc<15; tc+=3) {
+                        if(!items.some(i => i.r === tr && i.c === tc)) {
+                            r = tr; c = tc;
+                            break;
+                        }
+                    }
+                    if(r !== 1 || c !== 1) break;
+                }
+            }
+
+            let newItem = {
+                id: 'Common Area ' + (items.length + 1), 
+                display_label: 'LABEL',
+                type: 'custom-area',
+                r: r, c: c, h: 2, w: 4,
+                area: 8, dim: '4x2', 
+                status: 'service',
+                custom_color: '#9B59B6',
+                text_color: '#ffffff',
+                text_dir: 'horizontal',
+                font_size: 'auto',
+                show_border: false,
+                is_common_area: true
+            };
+            items.push(newItem);
+            renderItems();
+            
+            // Select and open modal to customize
+            selectedIndices = [items.length - 1];
+            renderSelectionState();
+            openModal(true);
         });
 
         $('#btn-reload-live').click(function() {
