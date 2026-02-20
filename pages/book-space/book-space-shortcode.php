@@ -36,6 +36,60 @@ if (empty($stalls)) {
     echo "<!-- DEBUG: Loaded " . count($stalls) . " stalls. -->";
 }
 
+// Stall Info Calculator based on ID prefix
+if (!function_exists('cnc_get_stall_info')) {
+    function cnc_get_stall_info($stall_id) {
+        $id = strtoupper($stall_id);
+        
+        $stall_types = [
+            'AS' => ['name' => 'Premium Large', 'dim' => '6m x 6m', 'area' => 36, 'rate' => 10500],
+            'BS' => ['name' => 'Large Suite', 'dim' => '6x4 & 3x3', 'area' => 33, 'rate' => 10500],
+            'DS' => ['name' => 'Medium Suite', 'dim' => '6x3 & 3x3', 'area' => 27, 'rate' => 10500],
+            'ES' => ['name' => 'Standard Large', 'dim' => '6m x 4m', 'area' => 24, 'rate' => 10500],
+            'FS' => ['name' => 'Standard Medium', 'dim' => '6m x 3m', 'area' => 18, 'rate' => 10500],
+            'GS' => ['name' => 'Compact', 'dim' => '4m x 3m', 'area' => 12, 'rate' => 11500],
+        ];
+        
+        $prefix2 = substr($id, 0, 2);
+        if (isset($stall_types[$prefix2])) {
+            $info = $stall_types[$prefix2];
+            $info['price'] = $info['area'] * $info['rate'];
+            $info['scheme'] = 'Raw Space';
+            return $info;
+        }
+        
+        $prefix1 = substr($id, 0, 1);
+        if (in_array($prefix1, ['A', 'B', 'C', 'D', 'E', 'F'])) {
+            return [
+                'name' => 'Shell Scheme',
+                'dim' => '3m x 3m',
+                'area' => 9,
+                'rate' => 11500,
+                'price' => 9 * 11500,
+                'scheme' => 'Shell Scheme'
+            ];
+        }
+        
+        return [
+            'name' => 'Standard',
+            'dim' => '3m x 3m',
+            'area' => 9,
+            'rate' => 11500,
+            'price' => 9 * 11500,
+            'scheme' => 'Shell Scheme'
+        ];
+    }
+}
+
+if (!function_exists('cnc_format_inr')) {
+    function cnc_format_inr($num) {
+        if ($num >= 100000) {
+            return '₹' . number_format($num / 100000, 1) . 'L';
+        }
+        return '₹' . number_format($num / 1000, 0) . 'K';
+    }
+}
+
 // AJAX URL for JS
 $ajax_url = admin_url('admin-ajax.php');
 ?>
@@ -172,6 +226,53 @@ $ajax_url = admin_url('admin-ajax.php');
     margin-bottom: 5px;
 }
 .stall:hover::after { opacity: 1; }
+
+/* Stall Info Display */
+.stall-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    gap: 1px;
+}
+.stall-info .stall-id {
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+}
+.stall-info .stall-dim {
+    font-size: 7px;
+    font-weight: 500;
+    opacity: 0.8;
+    line-height: 1;
+}
+.stall-info .stall-price {
+    font-size: 7px;
+    font-weight: 600;
+    color: #27AE60;
+    line-height: 1;
+}
+/* Hide info for smaller stalls */
+.stall[data-w="1"] .stall-dim,
+.stall[data-w="1"] .stall-price,
+.stall[data-w="2"] .stall-price { display: none; }
+.stall[data-h="1"] .stall-dim,
+.stall[data-h="1"] .stall-price { display: none; }
+/* Larger stalls get bigger text */
+.stall[data-w="6"] .stall-id,
+.stall[data-w="5"] .stall-id { font-size: 14px; }
+.stall[data-w="6"] .stall-dim,
+.stall[data-w="5"] .stall-dim { font-size: 9px; }
+.stall[data-w="6"] .stall-price,
+.stall[data-w="5"] .stall-price { font-size: 10px; }
+.stall[data-w="4"] .stall-id { font-size: 12px; }
+.stall[data-w="4"] .stall-dim { font-size: 8px; }
+.stall[data-w="4"] .stall-price { font-size: 9px; }
+/* Common areas don't show price */
+.stall.common-area .stall-price { display: none; }
+.stall.common-area .stall-dim { font-size: 8px; }
 
 /* Status Styles */
 .status-available { background: var(--bms-green); border: 1px solid #27AE60; }
@@ -422,6 +523,10 @@ $ajax_url = admin_url('admin-ajax.php');
                     
                     // Display Label
                     $display_label = !empty($s['display_label']) ? $s['display_label'] : str_replace('3.', '', $s['id']);
+                    
+                    // Get stall info for display
+                    $stall_info = cnc_get_stall_info($s['id']);
+                    $show_info = ($type === 'stall' && !$is_common_area && !$is_wall);
                 ?>
                     <div class="<?php echo $classes; ?>"
                          style="<?php echo $style; ?>"
@@ -434,9 +539,18 @@ $ajax_url = admin_url('admin-ajax.php');
                          data-company="<?php echo esc_attr($s['company']); ?>"
                          data-link="<?php echo esc_attr($s['link'] ?? ''); ?>"
                          data-common-area="<?php echo $is_common_area ? '1' : '0'; ?>"
-                         data-wall="<?php echo $is_wall ? '1' : '0'; ?>">
-                        <?php if (!$is_wall || !empty($s['display_label'])): ?>
-                        <span class="item-label <?php echo $text_dir_class; ?>"><?php echo esc_html($display_label); ?></span>
+                         data-wall="<?php echo $is_wall ? '1' : '0'; ?>"
+                         data-w="<?php echo $s['w']; ?>"
+                         data-h="<?php echo $s['h']; ?>">
+                        
+                        <?php if ($show_info): ?>
+                            <div class="stall-info">
+                                <span class="stall-id"><?php echo esc_html($display_label); ?></span>
+                                <span class="stall-dim"><?php echo esc_html($stall_info['dim']); ?></span>
+                                <span class="stall-price"><?php echo cnc_format_inr($stall_info['price']); ?></span>
+                            </div>
+                        <?php elseif (!$is_wall || !empty($s['display_label'])): ?>
+                            <span class="item-label <?php echo $text_dir_class; ?>"><?php echo esc_html($display_label); ?></span>
                         <?php endif; ?>
                         
                         <?php 
