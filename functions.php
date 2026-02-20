@@ -130,6 +130,7 @@ require_once get_stylesheet_directory() . '/inc/admin-floorplan-designer.php';
 require_once get_stylesheet_directory() . '/inc/rest/routes.php';
 require_once get_stylesheet_directory() . '/inc/visitor-registration-admin.php';
 require_once get_stylesheet_directory() . '/inc/gallery-admin.php';
+require_once get_stylesheet_directory() . '/inc/admin-participants-slider.php';
 
 // Include Components
 require_once get_stylesheet_directory() . '/components/login-popup/login-popup.php';

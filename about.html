@@ -1,0 +1,354 @@
+<style>
+    /* --- SCOPED VARIABLES --- */
+    .cnc-about-page {
+        --cnc-magenta: #C6308C;
+        --cnc-purple: #5E3A8E;
+        --cnc-teal: #00B4B4;
+        --cnc-dark: #0D0D0D;
+        --cnc-light: #F8F9FA;
+        --cnc-white: #FFFFFF;
+        --cnc-gradient-hero: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        --cnc-gradient-accent: linear-gradient(135deg, #5E3A8E 0%, #C6308C 100%);
+        --cnc-font-primary: 'Poppins', sans-serif;
+        --cnc-font-text: 'Inter', sans-serif;
+        --cnc-radius: 12px;
+    }
+
+    /* --- GLOBAL LAYOUT --- */
+    .cnc-about-page {
+        font-family: var(--cnc-font-text);
+        color: #444;
+        line-height: 1.7;
+        overflow-x: hidden;
+    }
+
+    .cnc-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    /* --- HERO SECTION --- */
+    .cnc-about-hero {
+        padding: 140px 0 100px;
+        background: var(--cnc-gradient-hero);
+        color: var(--cnc-white);
+        text-align: center;
+        position: relative;
+    }
+
+    /* Abstract BG Shape */
+    .cnc-about-hero::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 40%;
+        height: 100%;
+        background: radial-gradient(circle, rgba(198, 48, 140, 0.15) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    .cnc-about-hero h1 {
+        font-family: var(--cnc-font-primary);
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        font-weight: 800;
+        margin-bottom: 1.5rem;
+        line-height: 1.1;
+    }
+
+    .cnc-hero-highlight {
+        background: var(--cnc-gradient-accent);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .cnc-about-hero p {
+        font-size: 1.25rem;
+        max-width: 800px;
+        margin: 0 auto;
+        opacity: 0.9;
+    }
+
+    /* --- MISSION SECTION (Split Layout) --- */
+    .cnc-mission {
+        padding: 100px 0;
+        background: var(--cnc-white);
+    }
+
+    .cnc-split-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+        align-items: center;
+    }
+
+    .cnc-mission-text h2 {
+        font-family: var(--cnc-font-primary);
+        font-size: 2.5rem;
+        color: var(--cnc-dark);
+        margin-bottom: 1.5rem;
+        font-weight: 700;
+    }
+
+    .cnc-mission-text p {
+        margin-bottom: 1.5rem;
+        font-size: 1.05rem;
+        color: #555;
+    }
+
+    .cnc-mission-image {
+        position: relative;
+    }
+
+    .cnc-mission-image img {
+        width: 100%;
+        border-radius: var(--cnc-radius);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        z-index: 2;
+        position: relative;
+    }
+
+    /* Decorative Box behind image */
+    .cnc-mission-image::before {
+        content: '';
+        position: absolute;
+        top: -20px;
+        right: -20px;
+        width: 100%;
+        height: 100%;
+        border: 2px solid var(--cnc-magenta);
+        border-radius: var(--cnc-radius);
+        z-index: 1;
+    }
+
+    /* --- SCOPE SECTION (Grid of Cards) --- */
+    .cnc-scope {
+        padding: 100px 0;
+        background: var(--cnc-light);
+        text-align: center;
+    }
+
+    .cnc-scope h2 {
+        font-family: var(--cnc-font-primary);
+        font-size: 2.5rem;
+        color: var(--cnc-dark);
+        margin-bottom: 1rem;
+    }
+
+    .cnc-scope-desc {
+        max-width: 700px;
+        margin: 0 auto 4rem;
+        color: #666;
+    }
+
+    .cnc-scope-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+    }
+
+    .cnc-scope-card {
+        background: var(--cnc-white);
+        padding: 2.5rem 2rem;
+        border-radius: var(--cnc-radius);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        transition: transform 0.3s ease;
+        border-bottom: 4px solid transparent;
+    }
+
+    .cnc-scope-card:hover {
+        transform: translateY(-10px);
+        border-bottom-color: var(--cnc-magenta);
+    }
+
+    .cnc-scope-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+        display: block;
+    }
+
+    .cnc-scope-card h3 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: var(--cnc-dark);
+    }
+
+    .cnc-scope-card p {
+        font-size: 0.95rem;
+        color: #666;
+        margin: 0;
+    }
+
+    /* --- WHY EXHIBIT/VISIT (Checklist) --- */
+    .cnc-reasons {
+        padding: 100px 0;
+        background: var(--cnc-dark);
+        color: var(--cnc-white);
+    }
+
+    .cnc-reasons-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+    }
+
+    .cnc-reason-col h3 {
+        font-family: var(--cnc-font-primary);
+        font-size: 2rem;
+        margin-bottom: 2rem;
+        color: var(--cnc-magenta); /* Highlight color */
+    }
+
+    .cnc-check-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .cnc-check-list li {
+        margin-bottom: 1.5rem;
+        padding-left: 2.5rem;
+        position: relative;
+        font-size: 1.1rem;
+        color: rgba(255,255,255,0.85);
+    }
+
+    .cnc-check-list li::before {
+        content: '✓';
+        position: absolute;
+        left: 0;
+        top: 0;
+        color: var(--cnc-teal);
+        font-weight: 800;
+        font-size: 1.2rem;
+    }
+
+    /* --- CTA SECTION --- */
+    .cnc-about-cta {
+        padding: 80px 0;
+        background: var(--cnc-gradient-accent);
+        text-align: center;
+        color: var(--cnc-white);
+    }
+
+    .cnc-about-cta h2 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 2rem;
+    }
+
+    .cnc-btn-white {
+        background: var(--cnc-white);
+        color: var(--cnc-magenta);
+        padding: 15px 40px;
+        border-radius: 50px;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-block;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .cnc-btn-white:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+
+    /* --- RESPONSIVE --- */
+    @media (max-width: 900px) {
+        .cnc-split-grid { grid-template-columns: 1fr; }
+        .cnc-mission-image { order: -1; margin-bottom: 2rem; }
+        .cnc-reasons-grid { grid-template-columns: 1fr; gap: 3rem; }
+    }
+</style>
+
+<div class="cnc-about-page">
+
+    <section class="cnc-about-hero">
+        <div class="cnc-container">
+            <h1>Leading the Way in <span class="cnc-hero-highlight">Innovation</span></h1>
+            <p>Welcome to India's premier convergence of Cable TV, Broadband, IoT, and Digital Technology.</p>
+        </div>
+    </section>
+
+    <section class="cnc-mission">
+        <div class="cnc-container">
+            <div class="cnc-split-grid">
+                <div class="cnc-mission-text">
+                    <h2>A Vibrant Space for the Future</h2>
+                    <p><strong>Cable Net Convergence (CNC) Expo</strong> is more than just an exhibition; it is a catalyst for the digital revolution in India. Now in its <strong>14th edition</strong>, we provide a global stage for leading companies, aspiring entrepreneurs, and startups.</p>
+                    <p>Our mission is to bridge the gap between technology providers and service operators. We connect MSOs, LCOs, and ISPs with the manufacturers of Fiber Optics, Set-Top Boxes, and Networking Gear, fostering an ecosystem of growth and modernization.</p>
+                    <p>Join us to explore innovations that are shaping the future of Smart Cities, Connected Homes, and High-Speed Internet in India.</p>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+
+    <section class="cnc-scope">
+        <div class="cnc-container">
+            <h2>Concurrent Industry Focus</h2>
+            <p class="cnc-scope-desc">CNC Expo 2026 brings together multiple technology verticals under one roof, providing a unique opportunity to explore cross-industry synergies.</p>
+            
+            <div class="cnc-scope-grid">
+                <div class="cnc-scope-card">
+                    <span class="cnc-scope-icon">📡</span>
+                    <h3>Cable & Broadband</h3>
+                    <p>The core of India's connectivity, featuring Fiber Optics, GPON, and Last-Mile solutions.</p>
+                </div>
+                <div class="cnc-scope-card">
+                    <span class="cnc-scope-icon">📺</span>
+                    <h3>Broadcast & OTT</h3>
+                    <p>Next-gen entertainment tech, from IPTV and Android Boxes to Content Delivery Networks.</p>
+                </div>
+                <div class="cnc-scope-card">
+                    <span class="cnc-scope-icon">🤖</span>
+                    <h3>IoT & AI</h3>
+                    <p>Smart Home solutions, Industrial IoT, and Artificial Intelligence applications.</p>
+                </div>
+                <div class="cnc-scope-card">
+                    <span class="cnc-scope-icon">🛡️</span>
+                    <h3>Security & Surveillance</h3>
+                    <p>CCTV, biometric access, and advanced security infrastructure for smart cities.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cnc-reasons">
+        <div class="cnc-container">
+            <div class="cnc-reasons-grid">
+                <div class="cnc-reason-col">
+                    <h3>Why Exhibit?</h3>
+                    <ul class="cnc-check-list">
+                        <li>Showcase your products to 25,000+ targeted trade visitors.</li>
+                        <li>Network with key decision-makers from Government and Private sectors.</li>
+                        <li>Launch new products on a prestigious global platform.</li>
+                        <li>Find new distributors and partners across India.</li>
+                    </ul>
+                </div>
+                
+                <div class="cnc-reason-col">
+                    <h3>Who Visits?</h3>
+                    <ul class="cnc-check-list">
+                        <li>Cable Operators (LCOs/MSOs) & Internet Service Providers (ISPs).</li>
+                        <li>System Integrators & Network Engineers.</li>
+                        <li>Government Officials & Smart City Planners.</li>
+                        <li>Dealers, Distributors, and Retailers of Electronics.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cnc-about-cta">
+        <div class="cnc-container">
+            <h2>Be Part of the Digital Revolution</h2>
+            <p style="margin-bottom: 2rem;">August 14-16, 2026 | HITEX, Hyderabad</p>
+            <a href="/book-space" class="cnc-btn-white">Book Your Stall Now</a>
+        </div>
+    </section>
+
+</div>

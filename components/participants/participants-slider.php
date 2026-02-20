@@ -10,10 +10,36 @@ if (!defined('ABSPATH')) exit;
 
 ob_start();
 
+$slider_settings = function_exists('cnc_get_participants_slider_settings')
+    ? cnc_get_participants_slider_settings()
+    : [
+        'title' => 'Our Participants',
+        'subtitle' => 'Leading companies trusting our platform',
+        'scroll_duration' => 30,
+        'logo_width' => 180,
+        'logo_height' => 100,
+        'logo_gap' => 60,
+        'section_padding' => 60,
+        'max_items' => 0,
+        'pause_on_hover' => 1,
+        'grayscale' => 1,
+    ];
+
+$slider_title = (string) ($slider_settings['title'] ?? '');
+$slider_subtitle = (string) ($slider_settings['subtitle'] ?? '');
+$scroll_duration = max(5, (int) ($slider_settings['scroll_duration'] ?? 30));
+$logo_width = max(80, (int) ($slider_settings['logo_width'] ?? 180));
+$logo_height = max(40, (int) ($slider_settings['logo_height'] ?? 100));
+$logo_gap = max(10, (int) ($slider_settings['logo_gap'] ?? 60));
+$section_padding = max(0, (int) ($slider_settings['section_padding'] ?? 60));
+$max_items = max(0, (int) ($slider_settings['max_items'] ?? 0));
+$pause_on_hover = !empty($slider_settings['pause_on_hover']);
+$grayscale = !empty($slider_settings['grayscale']);
+
 // Query Registered Exhibitors with Logos
 $args = array(
     'post_type'      => 'cnc_exhibitor',
-    'posts_per_page' => -1,
+    'posts_per_page' => $max_items > 0 ? $max_items : -1,
     'post_status'    => 'publish',
     'orderby'        => 'menu_order title',
     'order'          => 'ASC',
@@ -36,18 +62,18 @@ if (empty($exhibitors)) {
         'gtpl.png', 'kp technologies.png', 'radius.png', 
         'RVR.png', 'smartplay.png', 'tfiber.png', 'well aegis.png'
     ];
+    if ($max_items > 0) {
+        $static_logos = array_slice($static_logos, 0, $max_items);
+    }
 }
 ?>
 <style>
-    :root {
-        --cnc-logo-width: 180px;
-        --cnc-logo-height: 100px;
-        --cnc-logo-gap: 60px;
-        --cnc-scroll-duration: 30s;
-    }
-
     .cnc-participants-section {
-        padding: 60px 0;
+        --cnc-logo-width: <?php echo esc_attr($logo_width); ?>px;
+        --cnc-logo-height: <?php echo esc_attr($logo_height); ?>px;
+        --cnc-logo-gap: <?php echo esc_attr($logo_gap); ?>px;
+        --cnc-scroll-duration: <?php echo esc_attr($scroll_duration); ?>s;
+        padding: <?php echo esc_attr($section_padding); ?>px 0;
         background: #fff;
         overflow: hidden;
         position: relative;
@@ -119,13 +145,13 @@ if (empty($exhibitors)) {
         max-width: 100%;
         max-height: 100%;
         object-fit: contain;
-        filter: grayscale(100%);
-        opacity: 0.7;
+        filter: <?php echo $grayscale ? 'grayscale(100%)' : 'none'; ?>;
+        opacity: <?php echo $grayscale ? '0.7' : '1'; ?>;
         transition: all 0.3s ease;
     }
 
     .cnc-logo-item:hover img {
-        filter: grayscale(0%);
+        filter: <?php echo $grayscale ? 'grayscale(0%)' : 'none'; ?>;
         opacity: 1;
     }
 
@@ -140,16 +166,21 @@ if (empty($exhibitors)) {
     }
 
     /* Pause on Hover */
+    <?php if ($pause_on_hover) : ?>
     .cnc-logo-slider:hover .cnc-logo-track {
         animation-play-state: paused;
     }
+    <?php endif; ?>
 
     /* Mobile Responsiveness */
     @media (max-width: 768px) {
-        :root {
-            --cnc-logo-width: 140px;
-            --cnc-logo-height: 80px;
-            --cnc-logo-gap: 30px;
+        .cnc-logo-item {
+            width: min(var(--cnc-logo-width), 140px);
+            height: min(var(--cnc-logo-height), 80px);
+        }
+
+        .cnc-logo-track {
+            gap: min(var(--cnc-logo-gap), 30px);
         }
         
         .cnc-participants-title {
@@ -160,10 +191,16 @@ if (empty($exhibitors)) {
 
 <div class="cnc-participants-section">
     <div class="cnc-participants-container">
-        <div class="cnc-participants-header">
-            <h2 class="cnc-participants-title">Our Participants</h2>
-            <p class="cnc-participants-subtitle">Leading companies trusting our platform</p>
-        </div>
+        <?php if ($slider_title !== '' || $slider_subtitle !== '') : ?>
+            <div class="cnc-participants-header">
+                <?php if ($slider_title !== '') : ?>
+                    <h2 class="cnc-participants-title"><?php echo esc_html($slider_title); ?></h2>
+                <?php endif; ?>
+                <?php if ($slider_subtitle !== '') : ?>
+                    <p class="cnc-participants-subtitle"><?php echo esc_html($slider_subtitle); ?></p>
+                <?php endif; ?>
+            </div>
+        <?php endif; ?>
 
         <div class="cnc-logo-slider">
             <div class="cnc-logo-track">
@@ -182,8 +219,8 @@ if (empty($exhibitors)) {
                             <img src="<?php echo esc_url($logo_url); ?>" 
                                  alt="<?php echo esc_attr($alt); ?>" 
                                  loading="lazy"
-                                 width="180" 
-                                 height="100">
+                                 width="<?php echo esc_attr($logo_width); ?>" 
+                                 height="<?php echo esc_attr($logo_height); ?>">
                         </a>
                     <?php 
                         endforeach;
@@ -196,8 +233,8 @@ if (empty($exhibitors)) {
                             <img src="<?php echo esc_url($img_path . $logo); ?>" 
                                  alt="<?php echo esc_attr($alt); ?>" 
                                  loading="lazy"
-                                 width="180" 
-                                 height="100">
+                                 width="<?php echo esc_attr($logo_width); ?>" 
+                                 height="<?php echo esc_attr($logo_height); ?>">
                         </div>
                     <?php 
                         endforeach;

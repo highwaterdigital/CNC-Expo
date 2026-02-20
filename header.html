@@ -1,0 +1,394 @@
+<style>
+    /* --- VARIABLES --- */
+    .cnc-header-wrapper {
+        --cnc-magenta: #C6308C;
+        --cnc-purple: #5E3A8E;
+        --cnc-black: #080714;
+        --cnc-night: #05040a;
+        --cnc-white: #FFFFFF;
+        --cnc-gray-text: #333333;
+        --cnc-gray-sub: #666666;
+        --header-height: 110px;
+        --cnc-font: 'Poppins', sans-serif;
+    }
+
+    /* --- 1. LAYOUT & VISIBILITY --- */
+    body { padding-top: var(--header-height); }
+    
+    .cnc-header {
+        position: fixed;
+        top: 0; left: 0; right: 0;
+        z-index: 99999;
+        background-color: var(--cnc-white);
+        border-bottom: 1px solid rgba(0,0,0,0.08);
+        padding: 12px 0;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        font-family: var(--cnc-font);
+        transition: top 0.3s ease;
+    }
+
+    /* Admin Bar Fixes */
+    body.admin-bar .cnc-header { top: 32px; }
+    @media (max-width: 782px) { body.admin-bar .cnc-header { top: 46px; } }
+
+    .cnc-header__container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 20px;
+        display: flex;
+        align-items: flex-end; 
+        justify-content: space-between;
+        height: 100%;
+    }
+
+    /* --- 2. BRANDING (Left) --- */
+    .cnc-brand-group {
+        display: flex;
+        align-items: flex-end; 
+        gap: 20px;
+        padding-bottom: 5px; 
+    }
+
+    .cnc-logo img {
+        height: 80px;
+        width: auto;
+        display: block;
+    }
+
+    .cnc-brand-divider {
+        height: 60px; 
+        width: 1px;
+        background: rgba(0,0,0,0.1);
+        display: block;
+        margin-bottom: 5px; 
+    }
+
+    .cnc-date-text {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.1;
+        text-transform: uppercase;
+        margin-bottom: 2px; 
+    }
+    
+    .cnc-date-main {
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: var(--cnc-magenta);
+        background: linear-gradient(90deg, #C6308C, #5E3A8E);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    
+    .cnc-date-sub {
+        font-size: 0.95rem;
+        color: var(--cnc-gray-sub);
+        letter-spacing: 0.1em;
+        font-weight: 600;
+    }
+
+    /* --- 3. ACTIONS (Right) --- */
+    .cnc-actions {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding-bottom: 15px; 
+    }
+
+    .cnc-btn {
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        padding: 12px 24px;
+        border-radius: 50px;
+        white-space: nowrap;
+        transition: 0.3s;
+        display: inline-flex;
+    }
+
+    .cnc-btn.visitor {
+        background: transparent;
+        border: 1px solid rgba(0,0,0,0.2);
+        color: var(--cnc-black);
+    }
+    .cnc-btn.visitor:hover { border-color: var(--cnc-magenta); color: var(--cnc-magenta); }
+
+    .cnc-btn.booking {
+        background: linear-gradient(135deg, var(--cnc-purple) 0%, var(--cnc-magenta) 100%);
+        border: none;
+        color: #FFF;
+        box-shadow: 0 4px 10px rgba(94, 58, 142, 0.3);
+    }
+    .cnc-btn.booking:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(198, 48, 140, 0.4); }
+
+    /* --- 4. MENU DRAWER --- */
+    .cnc-toggle {
+        background: none; border: none; cursor: pointer;
+        display: flex; flex-direction: column; gap: 5px; padding: 5px;
+        align-items: flex-end; width: 40px;
+    }
+    .cnc-toggle span { height: 2px; background: var(--cnc-black); transition: 0.3s; }
+    .cnc-toggle span:nth-child(1) { width: 28px; }
+    .cnc-toggle span:nth-child(2) { width: 20px; }
+    .cnc-toggle span:nth-child(3) { width: 24px; }
+    .cnc-toggle:hover span { background: var(--cnc-magenta); width: 28px; }
+
+    .cnc-overlay {
+        position: fixed; inset: 0; background: rgba(0,0,0,0.5); 
+        z-index: 999998; opacity: 0; visibility: hidden; transition: 0.3s;
+        backdrop-filter: blur(8px);
+    }
+    .cnc-overlay.active { opacity: 1; visibility: visible; }
+
+    .cnc-drawer {
+        position: fixed; top: 0; right: -100%; bottom: 0;
+        width: 350px; 
+        max-width: 90vw;
+        background: var(--cnc-white); 
+        z-index: 999999;
+        transition: right 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+        box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+        display: flex; flex-direction: column;
+        border-left: 1px solid rgba(0,0,0,0.05);
+    }
+    .cnc-drawer.active { right: 0; }
+
+    .cnc-drawer-head {
+        padding: 15px 20px; 
+        display: flex; justify-content: flex-end;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    .cnc-close { 
+        font-size: 2rem; 
+        color: var(--cnc-black); 
+        background: none; border: none; cursor: pointer; line-height: 1; 
+        transition: transform 0.2s;
+    }
+    .cnc-close:hover { color: var(--cnc-magenta); transform: rotate(90deg); }
+
+    .cnc-menu-list {
+        list-style: none; padding: 0; margin: 0;
+        overflow-y: auto; flex: 1;
+        padding: 10px 20px 20px;
+    }
+
+    /* Buttons Row */
+    .cnc-drawer-cta-row {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        margin-top: 10px;
+    }
+    .cnc-drawer-btn {
+        flex: 1;
+        text-align: center;
+        padding: 12px 5px;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #fff;
+        text-decoration: none;
+        transition: 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .cnc-drawer-btn.btn-purple { background-color: var(--cnc-purple); }
+    .cnc-drawer-btn.btn-magenta { background-color: var(--cnc-magenta); }
+    .cnc-drawer-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    /* UNIFIED MENU ITEMS */
+    .cnc-menu-item a {
+        display: block;
+        padding: 12px 0; /* Uniform padding */
+        color: var(--cnc-gray-text); 
+        text-decoration: none;
+        font-size: 1.2rem; /* Increased size */
+        font-weight: 500;
+        border-bottom: 1px solid rgba(0,0,0,0.05); /* Uniform divider */
+        transition: 0.2s;
+        line-height: 1.3;
+    }
+    
+    /* Hover effect for all items */
+    .cnc-menu-item a:hover { 
+        color: var(--cnc-magenta); 
+        padding-left: 8px; 
+    }
+
+    /* Keep Section Breaks */
+    .cnc-divider-line {
+        height: 1px;
+        background: rgba(0,0,0,0.1);
+        margin: 15px 0; 
+    }
+
+    .cnc-legal-row {
+        display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap;
+        font-size: 0.8rem;
+    }
+    .cnc-legal-row a { border: none; color: #999; padding: 0; text-decoration: none; }
+    .cnc-legal-row a:hover { color: var(--cnc-magenta); }
+    .cnc-legal-row span { color: #CCC; }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+        .cnc-btn.visitor, .cnc-btn.booking, .cnc-brand-divider, .cnc-date-text { display: none; }
+        .cnc-actions { padding-bottom: 0; align-items: center; } 
+        .cnc-brand-group { align-items: center; } 
+    }
+    @media (max-width: 768px) {
+        .cnc-header__container { padding: 0 15px; }
+        .cnc-drawer { width: 100%; max-width: 100%; } 
+    }
+</style>
+
+<div class="cnc-header-wrapper">
+    
+    <header class="cnc-header">
+        <div class="cnc-header__container">
+            
+            <div class="cnc-brand-group">
+                <a href="/" class="cnc-logo">
+                    <img src="https://cablenetconvergence.com/wp-content/uploads/2025/12/CNC-logo-v3@300x.png" alt="CNC Expo">
+                </a>
+                <div class="cnc-brand-divider"></div>
+                <div class="cnc-date-text">
+                    <span class="cnc-date-main">13 | 14 | 15 Aug 2026</span>
+                    <span class="cnc-date-sub">HITEX | HYDERABAD | INDIA</span>
+                </div>
+            </div>
+
+            <div class="cnc-actions">
+                <a href="https://cablenetconvergence.com/visitors/" class="cnc-btn visitor">VISITOR REGISTRATION</a>
+                <a href="https://cablenetconvergence.com/book-space/" class="cnc-btn booking">BOOK YOUR STALL</a>
+
+                <button class="cnc-toggle" id="cnc-menu-trigger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="cnc-drawer">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="cnc-overlay" id="cnc-overlay"></div>
+    
+    <div class="cnc-drawer" id="cnc-drawer" aria-hidden="true">
+        <div class="cnc-drawer-head">
+            <button class="cnc-close" id="cnc-menu-close" type="button" aria-label="Close menu">&times;</button>
+        </div>
+        
+        <ul class="cnc-menu-list">
+            
+            <div class="cnc-drawer-cta-row">
+                <a href="https://cablenetconvergence.com/book-space/" class="cnc-drawer-btn btn-purple">BOOK YOUR STALL</a>
+                <a href="/visitors" class="cnc-drawer-btn btn-magenta">Visitor REGISTRATION</a>
+            </div>
+
+          
+            <li class="cnc-menu-item"><a href="/exhibitors">2025 - Exhibitors List</a></li>
+            
+            <li class="cnc-menu-item"><a href="/exhibitor-profile">Exhibitor Profile</a></li>
+            
+                        
+            <li class="cnc-menu-item"><a href="/sponsors-partners">Sponsors & Partners</a></li>
+
+
+            <li class="cnc-menu-item"><a href="/layoutplan">Layout Plan</a></li>
+            <li class="cnc-menu-item"><a href="/important-dates">Expo Venue & Dates</a></li>
+            <li class="cnc-menu-item"><a href="/participants">Participants</a></li>
+
+            <li class="cnc-divider-line"></li>
+
+            <li class="cnc-menu-item"><a href="/visitors">Visitor Profile</a></li>
+            <li class="cnc-menu-item"><a href="/nearby-stays">Nearby Stays</a></li>
+
+            <li class="cnc-divider-line"></li>
+
+            <li class="cnc-menu-item"><a href="/gallery">Gallery</a></li>
+            <li class="cnc-menu-item"><a href="/contact">Contact</a></li>
+            
+            <li class="cnc-divider-line"></li>
+
+            <div class="cnc-legal-row">
+                <a href="/privacy-policy">Privacy</a>
+                <span>|</span>
+                <a href="/terms-conditions">Terms</a>
+                <span>|</span>
+                <a href="/cookie-policy">Cookies</a>
+            </div>
+
+        </ul>
+    </div>
+
+</div>
+
+<script>
+(function cncHeaderMenuInit() {
+    function getParts(target) {
+        const root = target.closest(".cnc-header-wrapper");
+        if (!root) return null;
+
+        const trigger = root.querySelector("#cnc-menu-trigger");
+        const close = root.querySelector("#cnc-menu-close");
+        const drawer = root.querySelector("#cnc-drawer");
+        const overlay = root.querySelector("#cnc-overlay");
+
+        if (!trigger || !close || !drawer || !overlay) return null;
+        return { trigger, close, drawer, overlay };
+    }
+
+    function openMenu(parts) {
+        parts.drawer.classList.add("active");
+        parts.overlay.classList.add("active");
+        parts.drawer.setAttribute("aria-hidden", "false");
+        parts.trigger.setAttribute("aria-expanded", "true");
+        document.body.style.overflow = "hidden";
+    }
+
+    function closeMenu(parts) {
+        parts.drawer.classList.remove("active");
+        parts.overlay.classList.remove("active");
+        parts.drawer.setAttribute("aria-hidden", "true");
+        parts.trigger.setAttribute("aria-expanded", "false");
+        document.body.style.overflow = "";
+    }
+
+    function toggleMenu(parts) {
+        if (parts.drawer.classList.contains("active")) {
+            closeMenu(parts);
+            return;
+        }
+        openMenu(parts);
+    }
+
+    // Event delegation makes this reliable in Elementor even after dynamic re-renders.
+    document.addEventListener("click", function(event) {
+        const trigger = event.target.closest("#cnc-menu-trigger");
+        if (trigger) {
+            const parts = getParts(trigger);
+            if (!parts) return;
+            event.preventDefault();
+            toggleMenu(parts);
+            return;
+        }
+
+        const closer = event.target.closest("#cnc-menu-close, #cnc-overlay");
+        if (closer) {
+            const parts = getParts(closer);
+            if (!parts) return;
+            event.preventDefault();
+            closeMenu(parts);
+        }
+    });
+
+    document.addEventListener("keydown", function(event) {
+        if (event.key !== "Escape") return;
+        document.querySelectorAll(".cnc-header-wrapper #cnc-drawer.active").forEach(function(drawer) {
+            const parts = getParts(drawer);
+            if (parts) closeMenu(parts);
+        });
+    });
+})();
+</script>
