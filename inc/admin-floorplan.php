@@ -278,9 +278,6 @@ function cnc_render_floorplan_page() {
 
                 <div class="cnc-admin-card">
                     <strong style="display:block; margin-bottom:10px;">Legend</strong>
-                    <div class="cnc-legend-row"><span class="cnc-legend-swatch" style="background: <?php echo CNC_COLOR_AVAILABLE; ?>;"></span> Available</div>
-                    <div class="cnc-legend-row"><span class="cnc-legend-swatch" style="background: <?php echo CNC_COLOR_PENDING; ?>;"></span> Pending approval</div>
-                    <div class="cnc-legend-row"><span class="cnc-legend-swatch" style="background: <?php echo CNC_COLOR_BOOKED; ?>;"></span> Booked</div>
                     <div class="cnc-legend-row"><span class="cnc-legend-swatch" style="background: <?php echo CNC_COLOR_EXIT; ?>;"></span> Entry / Fire exit</div>
                     <div class="cnc-legend-row"><span class="cnc-legend-swatch" style="background: <?php echo CNC_COLOR_WASHROOM; ?>;"></span> Washrooms / Service</div>
                     <div class="cnc-price-info" style="margin-top:10px;">
