@@ -543,6 +543,65 @@ const prefillFields = () => {
     if (email && !email.value && cnc_prefill.email) email.value = cnc_prefill.email;
 };
 
+// Stall Size & Price Calculator based on ID prefix
+function getStallInfo(stallId) {
+    const id = stallId.toUpperCase();
+    
+    // Define stall types based on prefix
+    const stallTypes = {
+        'AS': { name: 'Premium Large', dim: '6m x 6m', area: 36, rate: 10500, rateUSD: 260 },
+        'BS': { name: 'Large Suite', dim: '6x4 & 3x3', area: 33, rate: 10500, rateUSD: 260 },
+        'DS': { name: 'Medium Suite', dim: '6x3 & 3x3', area: 27, rate: 10500, rateUSD: 260 },
+        'ES': { name: 'Standard Large', dim: '6m x 4m', area: 24, rate: 10500, rateUSD: 260 },
+        'FS': { name: 'Standard Medium', dim: '6m x 3m', area: 18, rate: 10500, rateUSD: 260 },
+        'GS': { name: 'Compact', dim: '4m x 3m', area: 12, rate: 11500, rateUSD: 290 }
+    };
+    
+    // Check for 2-letter prefix first (AS, ES, FS, GS, BS, DS)
+    const prefix2 = id.substring(0, 2);
+    if (stallTypes[prefix2]) {
+        const info = stallTypes[prefix2];
+        return {
+            ...info,
+            price: info.area * info.rate,
+            priceUSD: info.area * info.rateUSD,
+            scheme: 'Raw Space'
+        };
+    }
+    
+    // Single letter prefix (A, B, C, D, E, F) = Shell Scheme
+    const prefix1 = id.charAt(0);
+    if (['A', 'B', 'C', 'D', 'E', 'F'].includes(prefix1)) {
+        return {
+            name: 'Shell Scheme',
+            dim: '3m x 3m',
+            area: 9,
+            rate: 11500,
+            rateUSD: 290,
+            price: 9 * 11500,
+            priceUSD: 9 * 290,
+            scheme: 'Shell Scheme'
+        };
+    }
+    
+    // Default fallback
+    return {
+        name: 'Standard',
+        dim: '3m x 3m',
+        area: 9,
+        rate: 11500,
+        rateUSD: 290,
+        price: 9 * 11500,
+        priceUSD: 9 * 290,
+        scheme: 'Shell Scheme'
+    };
+}
+
+// Format price with Indian numbering (lakhs)
+function formatINR(num) {
+    return '₹ ' + num.toLocaleString('en-IN');
+}
+
 // Close Modal
 function closePopup() {
     overlay.classList.remove('active');
@@ -559,12 +618,30 @@ function openBookingForm() {
         overlay.classList.add('active');
     }
     
+    // Calculate totals
+    let totalPrice = 0;
+    let totalArea = 0;
+    let stallDetails = [];
+    selectedStalls.forEach(id => {
+        const info = getStallInfo(id);
+        totalPrice += info.price;
+        totalArea += info.area;
+        stallDetails.push(`<span style="display:inline-block; background:#f0f0f0; padding:2px 8px; border-radius:4px; margin:2px; font-size:12px;">${id} (${info.dim})</span>`);
+    });
+    
     // Show Form
     document.getElementById('pop-title').textContent = 'Book Selected Stalls';
     document.getElementById('pop-status').textContent = selectedStalls.size + ' Stall(s) Selected';
     document.getElementById('pop-status').style.color = '#333';
     
-    let html = '<div class="detail-row"><span class="detail-label">Selected IDs:</span> <span class="detail-value">' + Array.from(selectedStalls).join(', ') + '</span></div>';
+    let html = `
+        <div class="detail-row"><span class="detail-label">Selected:</span> <span class="detail-value">${stallDetails.join('')}</span></div>
+        <div class="detail-row"><span class="detail-label">Total Area:</span> <span class="detail-value">${totalArea} m²</span></div>
+        <div class="detail-row" style="background:#f0fff0; padding:12px; border-radius:8px; margin-top:8px;">
+            <span class="detail-label">Total Price:</span> 
+            <span class="detail-value" style="font-size:18px; font-weight:700; color:#27AE60;">${formatINR(totalPrice)}</span>
+        </div>
+    `;
     detailsBox.innerHTML = html;
     
     actionBox.style.display = 'none';
@@ -573,24 +650,67 @@ function openBookingForm() {
     prefillFields();
 }
 
-// Update Sticky Summary
+// Update Sticky Summary with total price
 function updateStickySummary() {
     const count = selectedStalls.size;
     const idLabel = document.getElementById('sticky-id');
     const btn = document.getElementById('sticky-btn');
     
     if (count > 0) {
+        // Calculate total price
+        let totalPrice = 0;
+        let totalArea = 0;
+        selectedStalls.forEach(id => {
+            const info = getStallInfo(id);
+            totalPrice += info.price;
+            totalArea += info.area;
+        });
+        
         stickySummary.classList.add('visible');
-        idLabel.textContent = count + ' Stall(s) Selected';
+        idLabel.innerHTML = count + ' Stall(s) | ' + totalArea + ' m² | <strong>' + formatINR(totalPrice) + '</strong>';
         btn.textContent = 'Book ' + count + ' Stall(s)';
     } else {
         stickySummary.classList.remove('visible');
     }
 }
 
+// Show Available Stall Info Popup
+function showAvailableStallInfo(data) {
+    const info = getStallInfo(data.id);
+    
+    document.getElementById('pop-title').textContent = 'Stall ' + data.id;
+    document.getElementById('pop-status').textContent = 'Available for Booking';
+    document.getElementById('pop-status').style.color = '#27AE60';
+    
+    const html = `
+        <div class="detail-row"><span class="detail-label">Type:</span> <span class="detail-value">${info.name}</span></div>
+        <div class="detail-row"><span class="detail-label">Dimensions:</span> <span class="detail-value">${info.dim}</span></div>
+        <div class="detail-row"><span class="detail-label">Area:</span> <span class="detail-value">${info.area} m²</span></div>
+        <div class="detail-row"><span class="detail-label">Scheme:</span> <span class="detail-value">${info.scheme}</span></div>
+        <div class="detail-row" style="margin-top:10px; padding-top:10px; border-top:1px dashed #ddd;">
+            <span class="detail-label">Rate:</span> <span class="detail-value">₹${info.rate.toLocaleString('en-IN')}/m² ($${info.rateUSD}/m²)</span>
+        </div>
+        <div class="detail-row" style="background:#f0fff0; padding:12px; border-radius:8px; margin-top:8px;">
+            <span class="detail-label" style="font-size:14px;">Total Price:</span> 
+            <span class="detail-value" style="font-size:18px; font-weight:700; color:#27AE60;">${formatINR(info.price)}</span>
+            <span style="font-size:12px; color:#666; display:block;">($${info.priceUSD.toLocaleString()} USD)</span>
+        </div>
+    `;
+    
+    const actions = `
+        <button class="btn-action btn-book" onclick="closePopup(); document.querySelector('.stall[data-id=\"${data.id}\"]').click();">Select This Stall</button>
+    `;
+    
+    detailsBox.innerHTML = html;
+    actionBox.innerHTML = actions;
+    bookingForm.style.display = 'none';
+    actionBox.style.display = 'block';
+    overlay.classList.add('active');
+}
+
 // Stall Click Handler
 document.querySelectorAll('.stall').forEach(stall => {
-    stall.addEventListener('click', function() {
+    stall.addEventListener('click', function(e) {
         // DISABLE CLICK FOR COMMON AREAS (Washrooms, Exits, Stairs, etc.)
         if (this.dataset.commonArea === '1') return;
         if (this.dataset.type && this.dataset.type !== 'stall') return;
@@ -601,6 +721,12 @@ document.querySelectorAll('.stall').forEach(stall => {
         // Handle Booked/Pending Stalls - Show Details
         if (status === 'booked' || status === 'pending') {
             showStallDetails(this.dataset);
+            return;
+        }
+
+        // Double-click shows info popup for available stalls
+        if (e.detail === 2) {
+            showAvailableStallInfo(this.dataset);
             return;
         }
 
@@ -618,6 +744,7 @@ document.querySelectorAll('.stall').forEach(stall => {
 });
 
 function showStallDetails(data) {
+    const info = getStallInfo(data.id);
     document.getElementById('pop-title').textContent = 'Stall ' + data.id;
     
     let html = '';
@@ -630,7 +757,9 @@ function showStallDetails(data) {
         
         html = `
             <div class="detail-row"><span class="detail-label">Exhibitor:</span> <span class="detail-value">${data.company}</span></div>
-            <div class="detail-row"><span class="detail-label">Size:</span> <span class="detail-value">${data.area} Sq.m</span></div>
+            <div class="detail-row"><span class="detail-label">Type:</span> <span class="detail-value">${info.name}</span></div>
+            <div class="detail-row"><span class="detail-label">Dimensions:</span> <span class="detail-value">${info.dim}</span></div>
+            <div class="detail-row"><span class="detail-label">Size:</span> <span class="detail-value">${info.area} m²</span></div>
         `;
         actions = `<a href="${data.link}" class="btn-action btn-profile">View Exhibitor Profile</a>`;
         
@@ -642,6 +771,8 @@ function showStallDetails(data) {
         html = `
             <div class="detail-row"><span class="detail-label">Status:</span> <span class="detail-value">Awaiting Approval</span></div>
             <div class="detail-row"><span class="detail-label">Requested By:</span> <span class="detail-value">${data.company}</span></div>
+            <div class="detail-row"><span class="detail-label">Type:</span> <span class="detail-value">${info.name} (${info.dim})</span></div>
+            <div class="detail-row"><span class="detail-label">Size:</span> <span class="detail-value">${info.area} m²</span></div>
         `;
         actions = `<button class="btn-action" disabled style="background:#eee; color:#999; cursor:not-allowed">Unavailable</button>`;
     }
