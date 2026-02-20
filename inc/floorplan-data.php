@@ -94,7 +94,10 @@ function cnc_get_floorplan_data() {
                 'storage', 'electrical', 'pillar', 'corridor', 'blank', 'custom-area',
                 'food-court', 'networking'
             ];
+            $wall_types = ['wall', 'boundary', 'partition'];
+            
             $is_common_area = isset($item['is_common_area']) ? $item['is_common_area'] : in_array($type, $common_area_types);
+            $is_wall = isset($item['is_wall']) ? $item['is_wall'] : in_array($type, $wall_types);
 
             $stalls[] = [
                 'id' => $id,
@@ -119,7 +122,12 @@ function cnc_get_floorplan_data() {
                 'font_size' => isset($item['font_size']) ? $item['font_size'] : 'auto',
                 'show_border' => isset($item['show_border']) ? $item['show_border'] : false,
                 'border_color' => isset($item['border_color']) ? $item['border_color'] : '#333333',
-                'is_common_area' => $is_common_area
+                'is_common_area' => $is_common_area,
+                // Wall Properties
+                'is_wall' => $is_wall,
+                'wall_thickness' => isset($item['wall_thickness']) ? intval($item['wall_thickness']) : 3,
+                'wall_style' => isset($item['wall_style']) ? $item['wall_style'] : 'solid',
+                'wall_color' => isset($item['wall_color']) ? $item['wall_color'] : '#333333'
             ];
         }
     }

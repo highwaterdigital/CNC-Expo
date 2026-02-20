@@ -203,6 +203,28 @@ $ajax_url = admin_url('admin-ajax.php');
 .type-food-court { background: #E74C3C; color: white; border: 1px solid #C0392B; }
 .type-networking { background: #2ECC71; color: white; border: 1px solid #27AE60; }
 
+/* Wall / Border Frame Styles - Transparent with border only */
+.type-wall, .type-boundary, .type-partition {
+    background: transparent !important;
+    pointer-events: none;
+    z-index: 50;
+}
+.type-wall .item-label,
+.type-boundary .item-label,
+.type-partition .item-label {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255,255,255,0.95);
+    padding: 2px 8px;
+    font-size: 9px;
+    border-radius: 3px;
+    white-space: nowrap;
+    color: #333;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
 /* Common Area Styles - Non-clickable */
 .stall.common-area {
     cursor: default;
@@ -333,22 +355,40 @@ $ajax_url = admin_url('admin-ajax.php');
                     'food-court', 'networking', 'feature'
                 ];
                 
+                // Wall types (transparent borders)
+                $wall_types = ['wall', 'boundary', 'partition'];
+                
                 foreach($stalls as $s): 
                     $type = isset($s['type']) ? $s['type'] : 'stall';
                     $is_common_area = isset($s['is_common_area']) ? $s['is_common_area'] : in_array($type, $common_area_types);
+                    $is_wall = isset($s['is_wall']) ? $s['is_wall'] : in_array($type, $wall_types);
                     
                     $classes = 'stall status-' . $s['status'];
                     $classes .= ' type-' . $type;
                     if ($is_common_area) {
                         $classes .= ' common-area';
                     }
+                    if ($is_wall) {
+                        $classes .= ' wall-element';
+                    }
                     
                     $style = "grid-row: {$s['r']} / span {$s['h']}; grid-column: {$s['c']} / span {$s['w']};";
                     
-                    // Custom Color Logic
-                    if (!empty($s['custom_color'])) {
-                        $style .= " background-color: " . esc_attr($s['custom_color']) . ";";
-                        $style .= " border-color: " . esc_attr($s['custom_color']) . ";";
+                    // Wall-specific styling (transparent with border only)
+                    if ($is_wall) {
+                        $wall_thickness = !empty($s['wall_thickness']) ? intval($s['wall_thickness']) : 2;
+                        $wall_style = !empty($s['wall_style']) ? $s['wall_style'] : 'solid';
+                        $wall_color = !empty($s['wall_color']) ? $s['wall_color'] : '#333333';
+                        $style .= " background: transparent !important;";
+                        $style .= " border: {$wall_thickness}px {$wall_style} " . esc_attr($wall_color) . " !important;";
+                        $style .= " pointer-events: none;";
+                        $style .= " z-index: 50;";
+                    } else {
+                        // Custom Color Logic (for non-walls)
+                        if (!empty($s['custom_color'])) {
+                            $style .= " background-color: " . esc_attr($s['custom_color']) . ";";
+                            $style .= " border-color: " . esc_attr($s['custom_color']) . ";";
+                        }
                     }
                     
                     // Text Color
@@ -361,16 +401,20 @@ $ajax_url = admin_url('admin-ajax.php');
                         $style .= " font-size: " . intval($s['font_size']) . "px;";
                     }
                     
-                    // Border
-                    if (!empty($s['show_border']) && !empty($s['border_color'])) {
-                        $style .= " border: 2px solid " . esc_attr($s['border_color']) . ";";
-                    } elseif ($is_common_area && empty($s['show_border'])) {
-                        $style .= " border: none;";
+                    // Border (for non-walls)
+                    if (!$is_wall) {
+                        if (!empty($s['show_border']) && !empty($s['border_color'])) {
+                            $style .= " border: 2px solid " . esc_attr($s['border_color']) . ";";
+                        } elseif ($is_common_area && empty($s['show_border'])) {
+                            $style .= " border: none;";
+                        }
                     }
                     
-                    // Legacy fill/border support
-                    if(!empty($s['fill'])) $style .= " background-color: {$s['fill']};";
-                    if(!empty($s['border'])) $style .= " border-color: {$s['border']};";
+                    // Legacy fill/border support (for non-walls)
+                    if (!$is_wall) {
+                        if(!empty($s['fill'])) $style .= " background-color: {$s['fill']};";
+                        if(!empty($s['border'])) $style .= " border-color: {$s['border']};";
+                    }
                     
                     // Text Direction Class
                     $text_dir_class = '';

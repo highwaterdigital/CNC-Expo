@@ -203,6 +203,28 @@ $ajax_url = admin_url('admin-ajax.php');
 .type-food-court { background: #E74C3C; color: white; border: 1px solid #C0392B; }
 .type-networking { background: #2ECC71; color: white; border: 1px solid #27AE60; }
 
+/* Wall / Border Frame Styles - Transparent with border only */
+.type-wall, .type-boundary, .type-partition {
+    background: transparent !important;
+    pointer-events: none;
+    z-index: 50;
+}
+.type-wall .item-label,
+.type-boundary .item-label,
+.type-partition .item-label {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255,255,255,0.95);
+    padding: 2px 8px;
+    font-size: 9px;
+    border-radius: 3px;
+    white-space: nowrap;
+    color: #333;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
 /* Common Area Styles - Non-clickable */
 .stall.common-area {
     cursor: default;
@@ -333,24 +355,40 @@ $ajax_url = admin_url('admin-ajax.php');
                     'food-court', 'networking', 'feature'
                 ];
                 
+                // Wall types (transparent border-only frames)
+                $wall_types = ['wall', 'boundary', 'partition'];
+                
                 foreach($stalls as $s): 
                     $type = isset($s['type']) ? $s['type'] : 'stall';
                     $is_common_area = isset($s['is_common_area']) ? $s['is_common_area'] : in_array($type, $common_area_types);
+                    $is_wall = isset($s['is_wall']) ? $s['is_wall'] : in_array($type, $wall_types);
                     
                     $classes = 'stall status-' . $s['status'];
                     $classes .= ' type-' . $type;
                     if ($is_common_area) {
                         $classes .= ' common-area';
                     }
+                    if ($is_wall) {
+                        $classes .= ' wall-type';
+                    }
                     
                     $style = "grid-row: {$s['r']} / span {$s['h']}; grid-column: {$s['c']} / span {$s['w']};";
                     
-                    // Custom Color Logic
-                    $has_custom_color = !empty($s['custom_color']);
-                    if ($has_custom_color) {
-                        $style .= " background-color: " . esc_attr($s['custom_color']) . ";";
-                        // Darken border color
-                        $style .= " border-color: " . esc_attr($s['custom_color']) . ";";
+                    // WALL RENDERING - Transparent with border only
+                    if ($is_wall) {
+                        $style .= " background: transparent !important;";
+                        $wall_thickness = isset($s['wall_thickness']) ? intval($s['wall_thickness']) : 3;
+                        $wall_style = isset($s['wall_style']) ? $s['wall_style'] : 'solid';
+                        $wall_color = isset($s['wall_color']) ? $s['wall_color'] : '#333333';
+                        $style .= " border: {$wall_thickness}px {$wall_style} " . esc_attr($wall_color) . ";";
+                        $style .= " z-index: 50;";
+                    } else {
+                        // Custom Color Logic (not for walls)
+                        $has_custom_color = !empty($s['custom_color']);
+                        if ($has_custom_color) {
+                            $style .= " background-color: " . esc_attr($s['custom_color']) . ";";
+                            $style .= " border-color: " . esc_attr($s['custom_color']) . ";";
+                        }
                     }
                     
                     // Text Color
@@ -363,16 +401,18 @@ $ajax_url = admin_url('admin-ajax.php');
                         $style .= " font-size: " . intval($s['font_size']) . "px;";
                     }
                     
-                    // Border
-                    if (!empty($s['show_border']) && !empty($s['border_color'])) {
-                        $style .= " border: 2px solid " . esc_attr($s['border_color']) . ";";
-                    } elseif ($is_common_area && empty($s['show_border'])) {
-                        $style .= " border: none;";
+                    // Border (for non-walls)
+                    if (!$is_wall) {
+                        if (!empty($s['show_border']) && !empty($s['border_color'])) {
+                            $style .= " border: 2px solid " . esc_attr($s['border_color']) . ";";
+                        } elseif ($is_common_area && empty($s['show_border'])) {
+                            $style .= " border: none;";
+                        }
                     }
                     
                     // Legacy fill/border support
-                    if(!empty($s['fill'])) $style .= " background-color: {$s['fill']};";
-                    if(!empty($s['border'])) $style .= " border-color: {$s['border']};";
+                    if(!$is_wall && !empty($s['fill'])) $style .= " background-color: {$s['fill']};";
+                    if(!$is_wall && !empty($s['border'])) $style .= " border-color: {$s['border']};";
                     
                     // Text Direction Class
                     $text_dir_class = '';
@@ -393,12 +433,15 @@ $ajax_url = admin_url('admin-ajax.php');
                          data-type="<?php echo esc_attr($type); ?>"
                          data-company="<?php echo esc_attr($s['company']); ?>"
                          data-link="<?php echo esc_attr($s['link'] ?? ''); ?>"
-                         data-common-area="<?php echo $is_common_area ? '1' : '0'; ?>">
+                         data-common-area="<?php echo $is_common_area ? '1' : '0'; ?>"
+                         data-wall="<?php echo $is_wall ? '1' : '0'; ?>">
+                        <?php if (!$is_wall || !empty($s['display_label'])): ?>
                         <span class="item-label <?php echo $text_dir_class; ?>"><?php echo esc_html($display_label); ?></span>
+                        <?php endif; ?>
                         
                         <?php 
                         // Add Green Line Indicator for Available Stalls (regardless of background color)
-                        if ($s['status'] === 'available' && $type === 'stall' && !$is_common_area): ?>
+                        if ($s['status'] === 'available' && $type === 'stall' && !$is_common_area && !$is_wall): ?>
                             <div style="position:absolute; bottom:0; left:0; width:100%; height:3px; background:#27AE60;"></div>
                         <?php endif; ?>
                     </div>

@@ -153,6 +153,7 @@ function cnc_render_designer_page() {
             <div class="toolbar-group">
                 <button class="button" id="btn-add-stall" title="Add 3x3 Stall">+ Stall</button>
                 <button class="button" id="btn-add-common-area" title="Add Common Area" style="background:#9B59B6; color:white; border-color:#8E44AD;">+ Common Area</button>
+                <button class="button" id="btn-add-wall" title="Add Wall/Border Frame" style="background:#34495E; color:white; border-color:#2C3E50;">+ Wall</button>
                 <button class="button" id="btn-merge" title="Merge Selected Items (Same ID)">🔗 Merge</button>
                 <button class="button" id="btn-json-io" title="Import/Export JSON">JSON</button>
                 <button class="button" id="btn-import-default" title="Reset to Default Layout (hall3_layout.json)">📥 Import Default</button>
@@ -221,6 +222,11 @@ function cnc_render_designer_page() {
                         <option value="food-court">🍽️ Food Court</option>
                         <option value="networking">🤝 Networking Zone</option>
                     </optgroup>
+                    <optgroup label="🧱 Walls & Boundaries">
+                        <option value="wall">🧱 Wall / Border Frame</option>
+                        <option value="boundary">⬜ Boundary Line</option>
+                        <option value="partition">➖ Partition</option>
+                    </optgroup>
                 </select>
             </div>
             
@@ -256,6 +262,52 @@ function cnc_render_designer_page() {
                     <option value="pending">Pending (Orange)</option>
                 </select>
             </div>
+            <!-- Wall Options -->
+            <div class="form-row wall-options" style="display:none;">
+                <label>🧱 Wall Settings</label>
+                <div style="background:#f5f5f5; padding:12px; border-radius:6px; margin-top:5px;">
+                    <div style="margin-bottom:10px;">
+                        <label style="font-size:12px;">Border Thickness</label>
+                        <select id="input-wall-thickness" style="width:100%; margin-top:3px;">
+                            <option value="1">1px - Thin Line</option>
+                            <option value="2">2px - Light</option>
+                            <option value="3" selected>3px - Medium</option>
+                            <option value="4">4px - Bold</option>
+                            <option value="5">5px - Heavy</option>
+                            <option value="6">6px - Extra Heavy</option>
+                            <option value="8">8px - Thick</option>
+                            <option value="10">10px - Very Thick</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom:10px;">
+                        <label style="font-size:12px;">Border Style</label>
+                        <select id="input-wall-style" style="width:100%; margin-top:3px;">
+                            <option value="solid" selected>Solid ━━━</option>
+                            <option value="dashed">Dashed ┅┅┅</option>
+                            <option value="dotted">Dotted ┈┈┈</option>
+                            <option value="double">Double ═══</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size:12px;">Wall Color</label>
+                        <div style="display:flex; gap:8px; margin-top:3px;">
+                            <input type="color" id="input-wall-color" value="#333333" style="width:50px; height:30px; padding:0; border:1px solid #ccc;">
+                            <select id="input-wall-color-preset" style="flex:1;">
+                                <option value="#333333">Dark Gray (Default)</option>
+                                <option value="#000000">Black</option>
+                                <option value="#666666">Medium Gray</option>
+                                <option value="#E74C3C">Red</option>
+                                <option value="#3498DB">Blue</option>
+                                <option value="#27AE60">Green</option>
+                                <option value="#F39C12">Orange</option>
+                                <option value="#9B59B6">Purple</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <small style="color:#666; margin-top:5px; display:block;">Walls are transparent frames - they don't cover stalls underneath</small>
+            </div>
+            
             <div class="form-row common-area-colors" style="display:none;">
                 <label>Common Area Color Presets</label>
                 <select id="input-common-color">
@@ -487,6 +539,53 @@ function cnc_render_designer_page() {
         .item-food-court { background: #E74C3C; border-color: #C0392B; }
         .item-networking { background: #2ECC71; border-color: #27AE60; }
         
+        /* Wall / Border Frame Styles - Transparent with border only */
+        .item-wall, .item-boundary, .item-partition {
+            background: transparent !important;
+            pointer-events: none; /* Allow clicking through to stalls underneath */
+            z-index: 50; /* Above stalls but below selection */
+        }
+        .item-wall {
+            border: 3px solid #333333;
+        }
+        .item-boundary {
+            border: 2px dashed #666666;
+        }
+        .item-partition {
+            border: 2px solid #999999;
+        }
+        /* Wall label styling */
+        .item-wall .item-label,
+        .item-boundary .item-label,
+        .item-partition .item-label {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255,255,255,0.9);
+            padding: 2px 6px;
+            font-size: 9px;
+            border-radius: 3px;
+            white-space: nowrap;
+            color: #333;
+        }
+        /* Make walls selectable in designer mode */
+        .design-item.item-wall,
+        .design-item.item-boundary,
+        .design-item.item-partition {
+            pointer-events: auto;
+        }
+        /* Wall indicator icon */
+        .design-item.wall-type::before {
+            content: '🧱';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 14px;
+            opacity: 0.3;
+        }
+        
         /* Common Area Badge - Non-clickable indicator */
         .design-item.common-area::after {
             content: '🔒';
@@ -668,6 +767,14 @@ function cnc_render_designer_page() {
             'food-court', 'networking'
         ];
         
+        // Wall Types (transparent border-only frames)
+        const WALL_TYPES = ['wall', 'boundary', 'partition'];
+        
+        // Helper: Check if type is wall
+        function isWallType(type) {
+            return WALL_TYPES.includes(type);
+        }
+        
         // Helper: Darken a hex color
         function darkenColor(hex, percent) {
             hex = hex.replace('#', '');
@@ -687,12 +794,20 @@ function cnc_render_designer_page() {
         
         // Toggle form sections based on type
         function updateFormSections(type) {
-            if (isCommonAreaType(type)) {
-                $('.stall-only-option').hide();
+            // Hide all conditional sections first
+            $('.stall-only-option').hide();
+            $('.common-area-colors').hide();
+            $('.wall-options').hide();
+            
+            if (isWallType(type)) {
+                // Show wall options
+                $('.wall-options').show();
+            } else if (isCommonAreaType(type)) {
+                // Show common area colors
                 $('.common-area-colors').show();
             } else {
+                // Show stall options
                 $('.stall-only-option').show();
-                $('.common-area-colors').hide();
             }
         }
 
@@ -712,10 +827,14 @@ function cnc_render_designer_page() {
             // Use display_label if set, otherwise use ID
             let label = item.display_label || (item.id || '').replace('3.', '');
             
-            // Check if this is a common area (non-clickable)
+            // Check if this is a common area (non-clickable) or wall
             let isCommonArea = COMMON_AREA_TYPES.includes(item.type);
+            let isWall = isWallType(item.type);
             
-            let el = $(`<div class="design-item item-${item.type} ${isCommonArea ? 'common-area' : ''}" data-index="${index}" title="${item.id}">
+            let extraClasses = isCommonArea ? 'common-area' : '';
+            if (isWall) extraClasses += ' wall-type';
+            
+            let el = $(`<div class="design-item item-${item.type} ${extraClasses}" data-index="${index}" title="${item.id}">
                 <span class="item-label">${label}</span>
             </div>`);
             
@@ -731,15 +850,25 @@ function cnc_render_designer_page() {
             el.css('--drag-width', pixelW + 'px');
             el.css('--drag-height', pixelH + 'px');
             
+            // WALL RENDERING - Transparent with border only
+            if (isWall) {
+                el.css('background', 'transparent');
+                let wallThickness = item.wall_thickness || 3;
+                let wallStyle = item.wall_style || 'solid';
+                let wallColor = item.wall_color || '#333333';
+                el.css('border', `${wallThickness}px ${wallStyle} ${wallColor}`);
+                // Walls have higher z-index to appear above stalls
+                el.css('z-index', '50');
+            }
             // Apply Status Class if exists (only for stalls)
-            if(item.type === 'stall' && item.status) {
+            else if(item.type === 'stall' && item.status) {
                 el.addClass('status-' + item.status);
             } else if(item.type === 'stall') {
                 el.addClass('status-available');
             }
 
-            // Apply Custom Color
-            if (item.custom_color) {
+            // Apply Custom Color (not for walls)
+            if (item.custom_color && !isWall) {
                 el.css('background-color', item.custom_color);
                 // Darken border color
                 el.css('border-color', darkenColor(item.custom_color, 20));
@@ -1093,6 +1222,12 @@ function cnc_render_designer_page() {
                 $('#input-show-border').prop('checked', item.show_border || false);
                 $('#input-border-color').val(item.border_color || '#333333');
                 
+                // Wall Properties
+                $('#input-wall-thickness').val(item.wall_thickness || '3');
+                $('#input-wall-style').val(item.wall_style || 'solid');
+                $('#input-wall-color').val(item.wall_color || '#333333');
+                $('#input-wall-color-preset').val(item.wall_color || '#333333');
+                
                 // Common area preset color
                 if(isCommonAreaType(item.type) && item.custom_color) {
                     $('#input-common-color').val(item.custom_color);
@@ -1137,6 +1272,12 @@ function cnc_render_designer_page() {
                 $('#input-font-size').val('auto');
                 $('#input-show-border').prop('checked', false);
                 $('#input-border-color').val('#333333');
+                
+                // Reset wall settings
+                $('#input-wall-thickness').val('3');
+                $('#input-wall-style').val('solid');
+                $('#input-wall-color').val('#333333');
+                $('#input-wall-color-preset').val('#333333');
                 
                 $('#disp-dims').text(`${currentSelectionRect.w}m x ${currentSelectionRect.h}m`);
                 $('#btn-add').text('Add');
@@ -1206,6 +1347,24 @@ function cnc_render_designer_page() {
         $('#input-text-color-preset').change(function() {
             $('#input-text-color').val($(this).val());
         });
+        
+        // Sync Wall Color Preset -> Picker
+        $('#input-wall-color-preset').change(function() {
+            $('#input-wall-color').val($(this).val());
+        });
+        
+        // Sync Wall Color Picker -> Preset
+        $('#input-wall-color').change(function() {
+            let val = $(this).val();
+            let found = false;
+            $('#input-wall-color-preset option').each(function() {
+                if($(this).val().toLowerCase() === val.toLowerCase()) {
+                    $('#input-wall-color-preset').val($(this).val());
+                    found = true;
+                }
+            });
+            if(!found) $('#input-wall-color-preset').val($('#input-wall-color-preset option:first').val());
+        });
 
         $('#btn-cancel').click(function() { modal.hide(); });
         
@@ -1219,13 +1378,18 @@ function cnc_render_designer_page() {
             let type = $('#input-type').val();
             let id = $('#input-id').val();
             let displayLabel = $('#input-display-label').val().trim();
-            let status = isCommonAreaType(type) ? 'service' : $('#input-color-theme').val();
+            let status = isCommonAreaType(type) || isWallType(type) ? 'service' : $('#input-color-theme').val();
             let customColor = $('#input-custom-color').val();
             let textDir = $('#input-text-dir').val();
             let textColor = $('#input-text-color').val();
             let fontSize = $('#input-font-size').val();
             let showBorder = $('#input-show-border').is(':checked');
             let borderColor = $('#input-border-color').val();
+            
+            // Wall Properties
+            let wallThickness = parseInt($('#input-wall-thickness').val()) || 3;
+            let wallStyle = $('#input-wall-style').val() || 'solid';
+            let wallColor = $('#input-wall-color').val() || '#333333';
             
             if (customColor === '#ffffff') customColor = ''; // Treat white as empty/default
             
@@ -1245,6 +1409,11 @@ function cnc_render_designer_page() {
                     items[idx].show_border = showBorder;
                     items[idx].border_color = borderColor;
                     items[idx].is_common_area = isCommonAreaType(type);
+                    items[idx].is_wall = isWallType(type);
+                    // Wall properties
+                    items[idx].wall_thickness = wallThickness;
+                    items[idx].wall_style = wallStyle;
+                    items[idx].wall_color = wallColor;
                     if(type === 'stall') items[idx].price = items[idx].area * 11500;
                 });
             } else if (currentSelectionRect) {
@@ -1266,7 +1435,12 @@ function cnc_render_designer_page() {
                     font_size: fontSize,
                     show_border: showBorder,
                     border_color: borderColor,
-                    is_common_area: isCommonAreaType(type)
+                    is_common_area: isCommonAreaType(type),
+                    is_wall: isWallType(type),
+                    // Wall properties
+                    wall_thickness: wallThickness,
+                    wall_style: wallStyle,
+                    wall_color: wallColor
                 };
                 if(type === 'stall') newItem.price = newItem.area * 11500;
                 items.push(newItem);
@@ -1338,6 +1512,50 @@ function cnc_render_designer_page() {
                 font_size: 'auto',
                 show_border: false,
                 is_common_area: true
+            };
+            items.push(newItem);
+            renderItems();
+            
+            // Select and open modal to customize
+            selectedIndices = [items.length - 1];
+            renderSelectionState();
+            openModal(true);
+        });
+        
+        // Add Wall/Border Button
+        $('#btn-add-wall').click(function() {
+            // Find an empty spot
+            let r = 1, c = 1;
+            let collision = items.some(i => i.r === 1 && i.c === 1);
+            if(collision) {
+                for(let tr=1; tr<15; tr+=5) {
+                    for(let tc=1; tc<15; tc+=5) {
+                        if(!items.some(i => i.r === tr && i.c === tc)) {
+                            r = tr; c = tc;
+                            break;
+                        }
+                    }
+                    if(r !== 1 || c !== 1) break;
+                }
+            }
+
+            let newItem = {
+                id: 'Wall ' + (items.length + 1), 
+                display_label: '',
+                type: 'wall',
+                r: r, c: c, h: 5, w: 8,
+                area: 40, dim: '8x5', 
+                status: 'service',
+                custom_color: '',
+                text_color: '#333333',
+                text_dir: 'horizontal',
+                font_size: 'auto',
+                show_border: false,
+                is_common_area: false,
+                is_wall: true,
+                wall_thickness: 3,
+                wall_style: 'solid',
+                wall_color: '#333333'
             };
             items.push(newItem);
             renderItems();
