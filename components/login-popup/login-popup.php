@@ -287,7 +287,8 @@ function cnc_expo_login_popup_styles() {
             color: #999;
         }
 
-        body.expo-login-open {
+        body.expo-login-open,
+        body.expo-login-modal-open {
             overflow: hidden;
         }
 

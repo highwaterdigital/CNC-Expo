@@ -4,20 +4,22 @@
 	if (!modal || !backdrop) return;
 
 	const form = modal.querySelector('#expo-login-form');
+	if (!form) return;
 	const otpField = modal.querySelector('.expo-otp-field');
 	const statusEl = modal.querySelector('.expo-login-status');
 	const submitBtn = form.querySelector('button[type="submit"]');
+	const BODY_MODAL_CLASS = 'expo-login-modal-open';
 
 	const openModal = () => {
 		modal.hidden = false;
 		backdrop.hidden = false;
-		document.body.classList.add('expo-login-open');
+		document.body.classList.add(BODY_MODAL_CLASS);
 	};
 
 	const closeModal = () => {
 		modal.hidden = true;
 		backdrop.hidden = true;
-		document.body.classList.remove('expo-login-open');
+		document.body.classList.remove(BODY_MODAL_CLASS);
 	};
 
     // Robust Event Delegation for Login Triggers

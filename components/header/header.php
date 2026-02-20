@@ -327,7 +327,7 @@ if (!defined('ABSPATH')) exit;
                     </button>
                 <?php endif; ?>
 
-                <button id="cnc-toggle-btn" class="cnc-menu-toggle" aria-label="Open Menu">
+                <button id="cnc-toggle-btn" class="cnc-menu-toggle" aria-label="Open Menu" aria-expanded="false" aria-controls="cnc-drawer-menu">
                     <span></span><span></span><span></span>
                 </button>
 
@@ -381,43 +381,72 @@ if (!defined('ABSPATH')) exit;
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    
-    // 1. Menu Toggle Logic
-    const toggleBtn = document.getElementById("cnc-toggle-btn");
-    const closeBtn = document.getElementById("cnc-close-btn");
-    const drawer = document.getElementById("cnc-drawer-menu");
-    const overlay = document.getElementById("cnc-drawer-overlay");
+(function cncInitHeaderMenu() {
+    const setupMenu = () => {
+        const toggleBtn = document.getElementById("cnc-toggle-btn");
+        const closeBtn = document.getElementById("cnc-close-btn");
+        const drawer = document.getElementById("cnc-drawer-menu");
+        const overlay = document.getElementById("cnc-drawer-overlay");
 
-    function toggleMenu() {
-        if (!drawer || !overlay) return;
-        
-        const isActive = drawer.classList.contains("active");
-        if (isActive) {
-            drawer.classList.remove("active");
-            overlay.classList.remove("active");
-            document.body.style.overflow = ""; // Enable scroll
-        } else {
+        if (!toggleBtn || !closeBtn || !drawer || !overlay) {
+            return;
+        }
+
+        // Prevent duplicate listeners if this script is evaluated more than once.
+        if (toggleBtn.dataset.cncMenuBound === "1") {
+            return;
+        }
+        toggleBtn.dataset.cncMenuBound = "1";
+
+        const openMenu = () => {
             drawer.classList.add("active");
             overlay.classList.add("active");
-            document.body.style.overflow = "hidden"; // Disable scroll
-        }
-    }
+            toggleBtn.setAttribute("aria-expanded", "true");
+            document.body.style.overflow = "hidden";
+        };
 
-    if(toggleBtn) toggleBtn.addEventListener("click", toggleMenu);
-    if(closeBtn) closeBtn.addEventListener("click", toggleMenu);
-    if(overlay) overlay.addEventListener("click", toggleMenu);
+        const closeMenu = () => {
+            drawer.classList.remove("active");
+            overlay.classList.remove("active");
+            toggleBtn.setAttribute("aria-expanded", "false");
+            document.body.style.overflow = "";
+        };
 
-    // 2. Login Popup Trigger (Connects to your existing JS)
-    // The class 'expo-login-open' is handled by your assets/js/expo-login.js
-    // This listener just ensures the mobile drawer closes if they click login inside it
-    const loginBtns = document.querySelectorAll('.expo-login-open');
-    loginBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            if(drawer.classList.contains("active")) {
-                toggleMenu(); // Close drawer so popup is visible
+        const toggleMenu = () => {
+            if (drawer.classList.contains("active")) {
+                closeMenu();
+                return;
+            }
+            openMenu();
+        };
+
+        toggleBtn.addEventListener("click", (event) => {
+            event.preventDefault();
+            toggleMenu();
+        });
+        closeBtn.addEventListener("click", closeMenu);
+        overlay.addEventListener("click", closeMenu);
+
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape" && drawer.classList.contains("active")) {
+                closeMenu();
             }
         });
-    });
-});
+
+        // Close drawer before opening login modal, if user clicks a login trigger.
+        const loginBtns = document.querySelectorAll(".expo-login-open, [data-expo-login-trigger]");
+        loginBtns.forEach((btn) => {
+            btn.addEventListener("click", () => {
+                if (drawer.classList.contains("active")) {
+                    closeMenu();
+                }
+            });
+        });
+    };
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", setupMenu);
+    }
+    setupMenu();
+})();
 </script>
