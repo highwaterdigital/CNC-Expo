@@ -282,11 +282,6 @@ $ajax_url = admin_url('admin-ajax.php');
         <!-- Map Section -->
         <div class="cnc-map-card">
             <h2 style="margin:0 0 20px 0;"><?php echo esc_html(get_option('cnc_event_title', 'Hall 3 Floor Plan')); ?></h2>
-            <div class="cnc-map-legend">
-                <div class="legend-item"><div class="legend-dot green"></div> Available</div>
-                <div class="legend-item"><div class="legend-dot orange"></div> Pending</div>
-                <div class="legend-item"><div class="legend-dot grey"></div> Booked</div>
-            </div>
             
             <?php if(isset($success_msg)) echo "<div style='padding:15px; background:#d4edda; color:green; border-radius:6px; margin-bottom:20px;'>$success_msg</div>"; ?>
             <?php if(isset($error_msg)) echo "<div style='padding:15px; background:#f8d7da; color:red; border-radius:6px; margin-bottom:20px;'>$error_msg</div>"; ?>
