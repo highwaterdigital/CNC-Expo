@@ -218,8 +218,18 @@ function cnc_render_participants_slider_checkbox_field($args) {
 }
 
 function cnc_register_participants_slider_admin_page() {
+    add_menu_page(
+        'Participants Slider',
+        'Participants Slider',
+        'manage_options',
+        'cnc-participants-slider',
+        'cnc_render_participants_slider_settings_page',
+        'dashicons-images-alt2',
+        59
+    );
+
     add_submenu_page(
-        'themes.php',
+        'cnc-visitor-registration',
         'Participants Slider',
         'Participants Slider',
         'manage_options',
