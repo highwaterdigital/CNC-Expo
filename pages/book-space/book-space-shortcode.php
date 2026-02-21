@@ -219,34 +219,54 @@ $ajax_url = admin_url('admin-ajax.php');
 .cnc-stall-types {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
 }
 
 .cnc-type-row {
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-size: 12px;
-    color: #555;
+    gap: 12px;
+    font-size: 13px;
+    color: #333;
+    font-weight: 500;
+}
+
+.cnc-type-divider {
+    border-top: 1px dashed #ddd;
+    margin: 5px 0;
+    padding-top: 10px;
+}
+
+.cnc-type-subtitle {
+    font-size: 11px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 5px;
 }
 
 .cnc-type-badge {
-    width: 28px;
-    height: 20px;
-    border-radius: 4px;
+    width: 36px;
+    height: 26px;
+    border-radius: 5px;
     color: #fff;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 700;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
 }
 
 .cnc-type-size {
     margin-left: auto;
-    font-weight: 600;
-    color: #333;
+    font-weight: 700;
+    color: #5E3A8E;
+    background: #f0f0f0;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 12px;
 }
 
 /* PRICING CARD */
@@ -804,13 +824,22 @@ $ajax_url = admin_url('admin-ajax.php');
                 </div>
                 
                 <div class="cnc-stall-types">
+                    <div class="cnc-type-subtitle">Raw Space</div>
                     <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#E67E22;">AS</span> Premium Large <span class="cnc-type-size">36 m²</span></div>
                     <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#9B59B6;">BS</span> Large Suite <span class="cnc-type-size">33 m²</span></div>
                     <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#3498DB;">DS</span> Medium Suite <span class="cnc-type-size">27 m²</span></div>
                     <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#1ABC9C;">ES</span> Standard Large <span class="cnc-type-size">24 m²</span></div>
                     <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#E74C3C;">FS</span> Standard Medium <span class="cnc-type-size">18 m²</span></div>
                     <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#F39C12;">GS</span> Compact <span class="cnc-type-size">12 m²</span></div>
-                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#2ECC71;">A-F</span> Shell Scheme <span class="cnc-type-size">9 m²</span></div>
+                    
+                    <div class="cnc-type-divider"></div>
+                    <div class="cnc-type-subtitle">Shell Scheme (3m × 3m)</div>
+                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#2ECC71;">A</span> Row A <span class="cnc-type-size">9 m²</span></div>
+                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#E91E63;">B</span> Row B <span class="cnc-type-size">9 m²</span></div>
+                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#FFD700;">C</span> Row C <span class="cnc-type-size">9 m²</span></div>
+                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#FF9800;">D</span> Row D <span class="cnc-type-size">9 m²</span></div>
+                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#4CAF50;">E</span> Row E <span class="cnc-type-size">9 m²</span></div>
+                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#2196F3;">F</span> Row F <span class="cnc-type-size">9 m²</span></div>
                 </div>
             </div>
             
