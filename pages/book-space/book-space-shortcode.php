@@ -467,31 +467,29 @@ $ajax_url = admin_url('admin-ajax.php');
     opacity: 0.8;
     line-height: 1;
 }
-.stall-info .stall-price {
-    font-size: 7px;
-    font-weight: 600;
-    color: #27AE60;
-    line-height: 1;
-}
+/* Hide price display - only show stall number and dimensions */
+.stall-info .stall-price { display: none !important; }
 /* Hide info for smaller stalls */
-.stall[data-w="1"] .stall-dim,
-.stall[data-w="1"] .stall-price,
-.stall[data-w="2"] .stall-price { display: none; }
-.stall[data-h="1"] .stall-dim,
-.stall[data-h="1"] .stall-price { display: none; }
+.stall[data-w="1"] .stall-dim { display: none; }
+.stall[data-h="1"] .stall-dim { display: none; }
 /* Larger stalls get bigger text */
 .stall[data-w="6"] .stall-id,
 .stall[data-w="5"] .stall-id { font-size: 14px; }
 .stall[data-w="6"] .stall-dim,
 .stall[data-w="5"] .stall-dim { font-size: 9px; }
-.stall[data-w="6"] .stall-price,
-.stall[data-w="5"] .stall-price { font-size: 10px; }
 .stall[data-w="4"] .stall-id { font-size: 12px; }
 .stall[data-w="4"] .stall-dim { font-size: 8px; }
-.stall[data-w="4"] .stall-price { font-size: 9px; }
-/* Common areas don't show price */
-.stall.common-area .stall-price { display: none; }
 .stall.common-area .stall-dim { font-size: 8px; }
+
+/* === STALL TYPE COLORS BY PREFIX === */
+.stall[data-id^="AS"] { background: #E91E63 !important; border-color: #C2185B !important; color: #fff; }
+.stall[data-id^="BS"] { background: #FFFFFF !important; border-color: #ccc !important; color: #333; }
+.stall[data-id^="CS"] { background: #F7ABAD !important; border-color: #E57373 !important; color: #333; }
+.stall[data-id^="DS"] { background: #795548 !important; border-color: #5D4037 !important; color: #fff; }
+.stall[data-id^="ES"] { background: #2196F3 !important; border-color: #1976D2 !important; color: #fff; }
+.stall[data-id^="FS"] { background: #FFC107 !important; border-color: #FFA000 !important; color: #333; }
+.stall[data-id^="GS"] { background: #9C27B0 !important; border-color: #7B1FA2 !important; color: #fff; }
+.stall[data-id^="AF"] { background: #607D8B !important; border-color: #455A64 !important; color: #fff; }
 
 /* Status Styles */
 .status-available { background: var(--bms-green); border: 1px solid #27AE60; }
@@ -768,7 +766,6 @@ $ajax_url = admin_url('admin-ajax.php');
                             <div class="stall-info">
                                 <span class="stall-id"><?php echo esc_html($display_label); ?></span>
                                 <span class="stall-dim"><?php echo esc_html($stall_info['dim']); ?></span>
-                                <span class="stall-price"><?php echo cnc_format_inr($stall_info['price']); ?></span>
                             </div>
                         <?php elseif (!$is_wall || !empty($s['display_label'])): ?>
                             <span class="item-label <?php echo $text_dir_class; ?>"><?php echo esc_html($display_label); ?></span>
@@ -824,14 +821,15 @@ $ajax_url = admin_url('admin-ajax.php');
                 </div>
                 
                 <div class="cnc-stall-types">
-                    <div class="cnc-type-subtitle">Raw Space</div>
-                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#E67E22;">AS</span> Premium Large <span class="cnc-type-size">36 m²</span></div>
-                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#9B59B6;">BS</span> Large Suite <span class="cnc-type-size">33 m²</span></div>
-                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#ED6A5A;">CS</span> Shell Standard <span class="cnc-type-size">9 m²</span></div>
-                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#3498DB;">DS</span> Medium Suite <span class="cnc-type-size">27 m²</span></div>
-                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#1ABC9C;">ES</span> Standard Large <span class="cnc-type-size">24 m²</span></div>
-                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#E74C3C;">FS</span> Standard Medium <span class="cnc-type-size">18 m²</span></div>
-                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#F39C12;">GS</span> Compact <span class="cnc-type-size">12 m²</span></div>
+                    <div class="cnc-type-subtitle">Stall Types</div>
+                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#E91E63;">AS</span> Premium Large <span class="cnc-type-size">36 m²</span></div>
+                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#FFFFFF; color:#333; border:1px solid #ccc;">BS</span> Large Suite <span class="cnc-type-size">33 m²</span></div>
+                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#F7ABAD;">CS</span> Shell Standard <span class="cnc-type-size">9 m²</span></div>
+                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#795548;">DS</span> Medium Suite <span class="cnc-type-size">27 m²</span></div>
+                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#2196F3;">ES</span> Standard Large <span class="cnc-type-size">24 m²</span></div>
+                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#FFC107; color:#333;">FS</span> Standard Medium <span class="cnc-type-size">18 m²</span></div>
+                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#9C27B0;">GS</span> Compact <span class="cnc-type-size">12 m²</span></div>
+                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#607D8B;">AF</span> Feature <span class="cnc-type-size">-</span></div>
                 </div>
             </div>
             
