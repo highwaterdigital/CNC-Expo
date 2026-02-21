@@ -19,20 +19,37 @@ function cnc_register_pdf_endpoints() {
         'index.php?cnc_floorplan_pdf=1',
         'top'
     );
-    
-    // Add query var
-    add_filter('query_vars', function($vars) {
-        $vars[] = 'cnc_floorplan_pdf';
-        return $vars;
-    });
 }
 add_action('init', 'cnc_register_pdf_endpoints');
 
 /**
- * Handle PDF page template
+ * Register query var
+ */
+function cnc_register_pdf_query_vars($vars) {
+    $vars[] = 'cnc_floorplan_pdf';
+    return $vars;
+}
+add_filter('query_vars', 'cnc_register_pdf_query_vars');
+
+/**
+ * Handle PDF page template - Multiple approaches for reliability
  */
 function cnc_handle_pdf_template() {
+    // Check via query var (rewrite rule)
     $pdf_request = get_query_var('cnc_floorplan_pdf');
+    
+    // Fallback: Check via GET parameter
+    if (!$pdf_request && isset($_GET['cnc_floorplan_pdf'])) {
+        $pdf_request = 1;
+    }
+    
+    // Fallback: Check URL path directly
+    if (!$pdf_request) {
+        $request_uri = $_SERVER['REQUEST_URI'] ?? '';
+        if (preg_match('#/floorplan-pdf/?(\?.*)?$#', $request_uri)) {
+            $pdf_request = 1;
+        }
+    }
     
     if ($pdf_request) {
         require_once get_stylesheet_directory() . '/inc/pdf/class-cnc-floorplan-pdf.php';
@@ -42,7 +59,20 @@ function cnc_handle_pdf_template() {
         exit;
     }
 }
-add_action('template_redirect', 'cnc_handle_pdf_template', 0);
+add_action('template_redirect', 'cnc_handle_pdf_template', 1);
+
+/**
+ * Also hook into parse_request for earlier interception
+ */
+function cnc_parse_pdf_request($wp) {
+    $request_uri = $_SERVER['REQUEST_URI'] ?? '';
+    if (preg_match('#/floorplan-pdf/?(\?.*)?$#', $request_uri)) {
+        require_once get_stylesheet_directory() . '/inc/pdf/class-cnc-floorplan-pdf.php';
+        echo CNC_Floorplan_PDF::generate_printable_html();
+        exit;
+    }
+}
+add_action('parse_request', 'cnc_parse_pdf_request', 1);
 
 /**
  * AJAX: Generate Floor Plan PDF View
