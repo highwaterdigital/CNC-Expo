@@ -229,6 +229,25 @@ $ajax_url = admin_url('admin-ajax.php');
     font-size: 13px;
     color: #333;
     font-weight: 500;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+.cnc-type-row:last-child { border-bottom: none; }
+
+.cnc-type-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+}
+.cnc-type-info .cnc-type-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+}
+.cnc-type-info .cnc-type-dim {
+    font-size: 11px;
+    color: #888;
 }
 
 .cnc-type-divider {
@@ -483,7 +502,7 @@ $ajax_url = admin_url('admin-ajax.php');
 
 /* === STALL TYPE COLORS BY PREFIX === */
 .stall[data-id^="AS"] { background: #E91E63 !important; border-color: #C2185B !important; color: #fff; }
-.stall[data-id^="BS"] { background: #FFFFFF !important; border-color: #ccc !important; color: #333; }
+.stall[data-id^="BS"] { background: #4CAF50 !important; border-color: #388E3C !important; color: #fff; }
 .stall[data-id^="CS"] { background: #F7ABAD !important; border-color: #E57373 !important; color: #333; }
 .stall[data-id^="DS"] { background: #795548 !important; border-color: #5D4037 !important; color: #fff; }
 .stall[data-id^="ES"] { background: #2196F3 !important; border-color: #1976D2 !important; color: #fff; }
@@ -825,14 +844,14 @@ $ajax_url = admin_url('admin-ajax.php');
                 
                 <div class="cnc-stall-types">
                     <div class="cnc-type-subtitle">Stall Types</div>
-                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#E91E63;">AS</span> Premium Large <span class="cnc-type-size">36 m²</span></div>
-                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#FFFFFF; color:#333; border:1px solid #ccc;">BS</span> Large Suite <span class="cnc-type-size">33 m²</span></div>
-                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#F7ABAD;">CS</span> Shell Standard <span class="cnc-type-size">9 m²</span></div>
-                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#795548;">DS</span> Medium Suite <span class="cnc-type-size">27 m²</span></div>
-                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#2196F3;">ES</span> Standard Large <span class="cnc-type-size">24 m²</span></div>
-                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#FFC107; color:#333;">FS</span> Standard Medium <span class="cnc-type-size">18 m²</span></div>
-                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#9C27B0;">GS</span> Compact <span class="cnc-type-size">12 m²</span></div>
-                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#607D8B;">AF</span> Feature <span class="cnc-type-size">-</span></div>
+                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#E91E63;">AS</span><div class="cnc-type-info"><span class="cnc-type-name">Premium Large</span><span class="cnc-type-dim">6m × 6m</span></div><span class="cnc-type-size">36 m²</span></div>
+                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#4CAF50;">BS</span><div class="cnc-type-info"><span class="cnc-type-name">Large Suite</span><span class="cnc-type-dim">6×4 & 3×3</span></div><span class="cnc-type-size">33 m²</span></div>
+                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#F7ABAD; color:#333;">CS</span><div class="cnc-type-info"><span class="cnc-type-name">Shell Standard</span><span class="cnc-type-dim">3m × 3m</span></div><span class="cnc-type-size">9 m²</span></div>
+                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#795548;">DS</span><div class="cnc-type-info"><span class="cnc-type-name">Medium Suite</span><span class="cnc-type-dim">6×3 & 3×3</span></div><span class="cnc-type-size">27 m²</span></div>
+                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#2196F3;">ES</span><div class="cnc-type-info"><span class="cnc-type-name">Standard Large</span><span class="cnc-type-dim">6m × 4m</span></div><span class="cnc-type-size">24 m²</span></div>
+                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#FFC107; color:#333;">FS</span><div class="cnc-type-info"><span class="cnc-type-name">Standard Medium</span><span class="cnc-type-dim">6m × 3m</span></div><span class="cnc-type-size">18 m²</span></div>
+                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#9C27B0;">GS</span><div class="cnc-type-info"><span class="cnc-type-name">Compact</span><span class="cnc-type-dim">4m × 3m</span></div><span class="cnc-type-size">12 m²</span></div>
+                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#607D8B;">AF</span><div class="cnc-type-info"><span class="cnc-type-name">Feature</span><span class="cnc-type-dim">Variable</span></div><span class="cnc-type-size">-</span></div>
                 </div>
             </div>
             
