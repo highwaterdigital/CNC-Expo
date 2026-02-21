@@ -132,6 +132,12 @@ require_once get_stylesheet_directory() . '/inc/visitor-registration-admin.php';
 require_once get_stylesheet_directory() . '/inc/gallery-admin.php';
 require_once get_stylesheet_directory() . '/inc/admin-participants-slider.php';
 
+// Floor Plan PDF Generator Module
+require_once get_stylesheet_directory() . '/inc/pdf/class-cnc-floorplan-pdf.php';
+require_once get_stylesheet_directory() . '/inc/pdf/pdf-ajax-handler.php';
+require_once get_stylesheet_directory() . '/inc/pdf/pdf-shortcodes.php';
+require_once get_stylesheet_directory() . '/inc/pdf/pdf-admin-settings.php';
+
 // Include Components
 require_once get_stylesheet_directory() . '/components/login-popup/login-popup.php';
 

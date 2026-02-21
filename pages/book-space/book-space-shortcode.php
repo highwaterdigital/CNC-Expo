@@ -132,6 +132,205 @@ $ajax_url = admin_url('admin-ajax.php');
     gap: 20px;
 }
 
+/* MAIN LAYOUT WITH SIDEBAR */
+.cnc-booking-layout {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 20px;
+    align-items: start;
+}
+
+@media (max-width: 1100px) {
+    .cnc-booking-layout {
+        grid-template-columns: 1fr;
+    }
+    .cnc-booking-sidebar {
+        order: -1;
+    }
+}
+
+/* SIDEBAR STYLES */
+.cnc-booking-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    position: sticky;
+    top: 100px;
+}
+
+.cnc-sidebar-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+    border: 1px solid #eee;
+}
+
+.cnc-sidebar-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #C6308C;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cnc-legend-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 18px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.cnc-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+}
+
+.cnc-legend-box {
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    flex-shrink: 0;
+}
+
+.cnc-legend-label {
+    flex: 1;
+    color: #555;
+}
+
+.cnc-legend-count {
+    font-weight: 700;
+    color: #333;
+    background: #f5f5f5;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.cnc-stall-types {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.cnc-type-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: #555;
+}
+
+.cnc-type-badge {
+    width: 28px;
+    height: 20px;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.cnc-type-size {
+    margin-left: auto;
+    font-weight: 600;
+    color: #333;
+}
+
+/* PRICING CARD */
+.cnc-pricing-card {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: #fff;
+    border: none;
+}
+
+.cnc-price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.cnc-price-type {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: #C6308C;
+}
+
+.cnc-price-badge {
+    font-size: 10px;
+    background: rgba(255,255,255,0.15);
+    padding: 3px 8px;
+    border-radius: 4px;
+}
+
+.cnc-price-value {
+    font-family: 'Poppins', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.cnc-price-usd {
+    font-size: 14px;
+    opacity: 0.9;
+    margin-bottom: 5px;
+}
+
+.cnc-price-unit {
+    font-size: 12px;
+    font-weight: 400;
+    opacity: 0.8;
+}
+
+/* DOWNLOAD BUTTON */
+.cnc-download-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 14px 20px;
+    margin-top: 20px;
+    background: linear-gradient(135deg, #C6308C 0%, #E74C3C 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(231,76,60,0.3);
+}
+
+.cnc-download-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(231,76,60,0.4);
+    color: #fff;
+}
+
+.cnc-download-note {
+    font-size: 10px;
+    text-align: center;
+    margin-top: 8px;
+    opacity: 0.7;
+}
+
 /* MAP CARD */
 .cnc-map-card {
     background: #fff;
@@ -438,14 +637,16 @@ $ajax_url = admin_url('admin-ajax.php');
 
 <div class="cnc-booking-wrapper">
     <div class="cnc-booking-container">
-        <!-- Map Section -->
-        <div class="cnc-map-card">
-            <h2 style="margin:0 0 20px 0;"><?php echo esc_html(get_option('cnc_event_title', 'Hall 3 Floor Plan')); ?></h2>
-            
-            <?php if(isset($success_msg)) echo "<div style='padding:15px; background:#d4edda; color:green; border-radius:6px; margin-bottom:20px;'>$success_msg</div>"; ?>
-            <?php if(isset($error_msg)) echo "<div style='padding:15px; background:#f8d7da; color:red; border-radius:6px; margin-bottom:20px;'>$error_msg</div>"; ?>
+        <!-- Main Layout with Sidebar -->
+        <div class="cnc-booking-layout">
+            <!-- Map Section -->
+            <div class="cnc-map-card">
+                <h2 style="margin:0 0 20px 0;"><?php echo esc_html(get_option('cnc_event_title', 'Hall 3 Floor Plan')); ?></h2>
+                
+                <?php if(isset($success_msg)) echo "<div style='padding:15px; background:#d4edda; color:green; border-radius:6px; margin-bottom:20px;'>$success_msg</div>"; ?>
+                <?php if(isset($error_msg)) echo "<div style='padding:15px; background:#f8d7da; color:red; border-radius:6px; margin-bottom:20px;'>$error_msg</div>"; ?>
 
-            <div class="cnc-grid">
+                <div class="cnc-grid">
                 
                 <?php 
                 // Common area types (non-clickable)
@@ -563,6 +764,87 @@ $ajax_url = admin_url('admin-ajax.php');
                 
             </div>
         </div>
+        
+        <!-- Sidebar with Legend & Download -->
+        <aside class="cnc-booking-sidebar">
+            <?php 
+            // Calculate live stats for sidebar
+            $sidebar_stats = ['available' => 0, 'pending' => 0, 'booked' => 0, 'total' => 0];
+            foreach ($stalls as $ss) {
+                $st = isset($ss['type']) ? $ss['type'] : 'stall';
+                if ($st !== 'stall') continue;
+                $sidebar_stats['total']++;
+                if (isset($sidebar_stats[$ss['status']])) $sidebar_stats[$ss['status']]++;
+            }
+            ?>
+            
+            <!-- Legend Section -->
+            <div class="cnc-sidebar-card">
+                <h3 class="cnc-sidebar-title">
+                    <svg width="18" height="18" fill="#C6308C" viewBox="0 0 20 20"><path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/></svg>
+                    Legend & Configuration
+                </h3>
+                
+                <div class="cnc-legend-grid">
+                    <div class="cnc-legend-item">
+                        <span class="cnc-legend-box" style="background: #2ECC71;"></span>
+                        <span class="cnc-legend-label">Available</span>
+                        <span class="cnc-legend-count"><?php echo $sidebar_stats['available']; ?></span>
+                    </div>
+                    <div class="cnc-legend-item">
+                        <span class="cnc-legend-box" style="background: #BDC3C7;"></span>
+                        <span class="cnc-legend-label">Pending</span>
+                        <span class="cnc-legend-count"><?php echo $sidebar_stats['pending']; ?></span>
+                    </div>
+                    <div class="cnc-legend-item">
+                        <span class="cnc-legend-box" style="background: #000000;"></span>
+                        <span class="cnc-legend-label">Booked</span>
+                        <span class="cnc-legend-count"><?php echo $sidebar_stats['booked']; ?></span>
+                    </div>
+                </div>
+                
+                <div class="cnc-stall-types">
+                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#E67E22;">AS</span> Premium Large <span class="cnc-type-size">36 m²</span></div>
+                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#9B59B6;">BS</span> Large Suite <span class="cnc-type-size">33 m²</span></div>
+                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#3498DB;">DS</span> Medium Suite <span class="cnc-type-size">27 m²</span></div>
+                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#1ABC9C;">ES</span> Standard Large <span class="cnc-type-size">24 m²</span></div>
+                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#E74C3C;">FS</span> Standard Medium <span class="cnc-type-size">18 m²</span></div>
+                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#F39C12;">GS</span> Compact <span class="cnc-type-size">12 m²</span></div>
+                    <div class="cnc-type-row"><span class="cnc-type-badge" style="background:#2ECC71;">A-F</span> Shell Scheme <span class="cnc-type-size">9 m²</span></div>
+                </div>
+            </div>
+            
+            <!-- Pricing Section -->
+            <div class="cnc-sidebar-card cnc-pricing-card">
+                <h3 class="cnc-sidebar-title" style="color:#fff; border-color:rgba(255,255,255,0.3);">
+                    💰 Pricing Rates
+                </h3>
+                <div class="cnc-price-row">
+                    <div class="cnc-price-type">SHELL SCHEME</div>
+                    <div class="cnc-price-badge">Min 9 m²</div>
+                </div>
+                <div class="cnc-price-value">₹ 11,500 <span class="cnc-price-unit">per sqm</span></div>
+                <div class="cnc-price-usd">$ 290 <span class="cnc-price-unit">per sqm (USD)</span></div>
+                
+                <div class="cnc-price-row" style="margin-top:15px;">
+                    <div class="cnc-price-type">RAW SPACE</div>
+                    <div class="cnc-price-badge">Min 18 m²</div>
+                </div>
+                <div class="cnc-price-value">₹ 10,500 <span class="cnc-price-unit">per sqm</span></div>
+                <div class="cnc-price-usd">$ 260 <span class="cnc-price-unit">per sqm (USD)</span></div>
+                
+                <!-- Dynamic Download Button -->
+                <a href="<?php echo home_url('/floorplan-pdf/'); ?>" target="_blank" class="cnc-download-btn">
+                    <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    </svg>
+                    DOWNLOAD FLOOR PLAN
+                </a>
+                <div class="cnc-download-note">*Live status - Updated in real-time</div>
+            </div>
+        </aside>
+        
+        </div><!-- /.cnc-booking-layout -->
     </div>
 </div>
 
