@@ -833,13 +833,13 @@ $ajax_url = admin_url('admin-ajax.php');
                 <div class="cnc-price-value">₹ 10,500 <span class="cnc-price-unit">per sqm</span></div>
                 <div class="cnc-price-usd">$ 260 <span class="cnc-price-unit">per sqm (USD)</span></div>
                 
-                <!-- Dynamic Download Button -->
-                <a href="<?php echo home_url('/floorplan-pdf/'); ?>" target="_blank" class="cnc-download-btn">
+                <!-- Instant Download Button -->
+                <button type="button" id="cnc-download-floorplan-btn" class="cnc-download-btn" onclick="downloadFloorPlan()">
                     <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
                     </svg>
-                    DOWNLOAD FLOOR PLAN
-                </a>
+                    <span id="download-btn-text">DOWNLOAD FLOOR PLAN</span>
+                </button>
                 <div class="cnc-download-note">*Live status - Updated in real-time</div>
             </div>
         </aside>
@@ -847,6 +847,9 @@ $ajax_url = admin_url('admin-ajax.php');
         </div><!-- /.cnc-booking-layout -->
     </div>
 </div>
+
+<!-- html2canvas Library for Floor Plan Capture -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <!-- POPUP MODAL -->
 <div class="stall-popup-overlay" id="popup-overlay">
@@ -1185,6 +1188,66 @@ function showStallDetails(data) {
 overlay.addEventListener('click', function(e) {
     if (e.target === overlay) closePopup();
 });
+
+// FLOOR PLAN DOWNLOAD FUNCTION
+function downloadFloorPlan() {
+    const btn = document.getElementById('cnc-download-floorplan-btn');
+    const btnText = document.getElementById('download-btn-text');
+    const originalText = btnText.textContent;
+    
+    // Show loading state
+    btn.disabled = true;
+    btnText.textContent = 'Generating...';
+    btn.style.opacity = '0.7';
+    
+    // Get the floor plan grid
+    const mapCard = document.querySelector('.cnc-map-card');
+    
+    if (!mapCard) {
+        alert('Floor plan not found');
+        btn.disabled = false;
+        btnText.textContent = originalText;
+        btn.style.opacity = '1';
+        return;
+    }
+    
+    // Capture using html2canvas
+    html2canvas(mapCard, {
+        scale: 2, // Higher resolution
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+        width: mapCard.scrollWidth,
+        height: mapCard.scrollHeight,
+        scrollX: 0,
+        scrollY: 0
+    }).then(function(canvas) {
+        // Create download link
+        const link = document.createElement('a');
+        const date = new Date();
+        const dateStr = date.toISOString().split('T')[0];
+        link.download = `CNC-Expo-FloorPlan-${dateStr}.png`;
+        link.href = canvas.toDataURL('image/png', 1.0);
+        
+        // Trigger download
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Reset button
+        btn.disabled = false;
+        btnText.textContent = originalText;
+        btn.style.opacity = '1';
+        
+    }).catch(function(error) {
+        console.error('Download failed:', error);
+        alert('Download failed. Please try again.');
+        btn.disabled = false;
+        btnText.textContent = originalText;
+        btn.style.opacity = '1';
+    });
+}
 
 // AJAX Form Submission
 bookingForm.addEventListener('submit', function(e) {
